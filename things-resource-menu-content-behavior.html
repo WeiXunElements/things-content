@@ -27,6 +27,15 @@ Things.ResourceMenuContentBehaviorImpl = {
 		},
 
 		/**
+		 * 라우팅 변경시 넘어오는 검색 조건
+		 * 검색 조건이 설정되면 자동으로 서버에 검색을 요청한다.
+		 */
+		initialSearchParams: {
+			type: Object,
+			observer: '_initialSearchParamsChanged'
+		},
+
+		/**
 		 * 조회 결과 
 		 */
 		lastResponse: {
@@ -93,14 +102,39 @@ Things.ResourceMenuContentBehaviorImpl = {
 	 * Life Cycle - Ready
 	 */
 	ready: function() {
-    var grid = this.$['grid'];
-    if(grid) {
-      this.listen(grid, 'things-grid-configured', 'refreshGridData');
-      this.listen(grid, 'things-grid-save-success', 'refreshGridData');  
-      this.listen(grid, 'things-grid-detail-tap', 'showDetailView');
-      this.listen(grid, 'things-grid-handle-request-release','showRequestReleaseForm');
-      this.listen(grid, 'things-grid-handle-open-import', 'openImportDialog');
-    }
+		var grid = this.$['grid'];
+		if(grid) {
+			this.listen(grid, 'things-grid-configured', 'refreshGridData');
+			this.listen(grid, 'things-grid-save-success', 'refreshGridData');  
+			this.listen(grid, 'things-grid-detail-tap', 'showDetailView');
+			this.listen(grid, 'things-grid-handle-request-release','showRequestReleaseForm');
+			this.listen(grid, 'things-grid-handle-open-import', 'openImportDialog');
+		}
+	},
+
+	/**
+	 * Life Cycle - Attached
+	 */
+	attached: function() {
+		// Page 전환시 발생하는 routing change event Listener
+		document.addEventListener('things-routing-changed', function(event) {
+			var initialParams = event.detail.initialParams;
+			if('/' + this.menuInfo.routing == initialParams.path) {
+				delete initialParams['path'];
+				this.initialSearchParams = initialParams;
+			}
+		}.bind(this));
+	},
+
+	/**
+	 * 초기 검색 파라미터 설정 
+	 */
+	_initialSearchParamsChanged: function(initialSearchParams) {
+		var searchForm = this.getResourceSearchForm();
+		if(searchForm) {
+			searchForm.setFormData(initialSearchParams);
+			searchForm.submitMyForm();
+		}
 	},
 
 	/**
