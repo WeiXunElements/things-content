@@ -150,10 +150,10 @@ Things.ResourceMenuContentBehaviorImpl = {
 			}
 
 			if(menuInfo.resource_type == 'ENTITY') {
-				searchForm.paramType = 'RESOURCE';
+				if(searchForm) searchForm.paramType = 'RESOURCE';
 
 			} else if(menuInfo.resource_type == 'DIY_SERVICE') {
-				searchForm.paramType = 'DIY';
+				if(searchForm) searchForm.paramType = 'DIY';
 			}
 		}
 	},
