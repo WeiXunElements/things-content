@@ -6,6 +6,8 @@
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 <link rel="import" href="../things-view-open-behavior/things-view-open-behavior.html">
 
+<link rel="import" href="../iron-signals/iron-signals.html">
+
 <script>
 
 window.Things = window.Things || {};
@@ -113,20 +115,6 @@ Things.ResourceMenuContentBehaviorImpl = {
 	},
 
 	/**
-	 * Life Cycle - Attached
-	 */
-	attached: function() {
-		// Page 전환시 발생하는 routing change event Listener
-		document.addEventListener('things-routing-changed', function(event) {
-			var initialParams = event.detail.initialParams;
-			if('/' + this.menuInfo.routing == initialParams.path) {
-				delete initialParams['path'];
-				this.initialSearchParams = initialParams;
-			}
-		}.bind(this));
-	},
-
-	/**
 	 * 초기 검색 파라미터 설정 
 	 */
 	_initialSearchParamsChanged: function(initialSearchParams) {
@@ -173,6 +161,7 @@ Things.ResourceMenuContentBehaviorImpl = {
 	_menuInfoChanged: function(menuInfo) {
 		if(menuInfo) {
 			this.menuId = menuInfo.id;
+			this.routingChanged(menuInfo.routing);
 			this.itemsProp = menuInfo.items_prop;
 			this.totalProp = menuInfo.total_prop;
 			var searchForm = this.getResourceSearchForm();
@@ -191,6 +180,26 @@ Things.ResourceMenuContentBehaviorImpl = {
 			}
 		}
 	},
+
+	/**
+	 * Route Changed
+	 */
+	routingChanged: function(routing) {
+		document.addEventListener('things-routing-changed-' + routing, function(event) {
+			// 1. grid resize
+			var resourceGrid = this.getResourceGrid();
+			if(resourceGrid) {
+				resourceGrid.resizeGrid();
+			}
+
+			// 2. 페이지 전환시 초기 파라미터 세팅 
+			if(event.detail && event.detail.initialParams) {
+				var initialParams = event.detail.initialParams;
+				delete initialParams['path'];
+				this.initialSearchParams = initialParams;
+			}
+		}.bind(this));
+	},	
 
 	/**
 	 * 조회 데이터 변경시 
