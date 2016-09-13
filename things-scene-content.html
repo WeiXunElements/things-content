@@ -1,0 +1,209 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../things-global-behavior/things-global-behavior.html">
+<link rel="import" href="../things-ws/things-ws-subscriber.html">
+
+<link rel="import" href="../things-scene-chartjs/things-scene-chartjs.html">
+<link rel="import" href="../things-scene-controlchart/things-scene-controlchart.html">
+<link rel="import" href="../things-scene-three-container/things-scene-three-container.html">
+<link rel="import" href="../things-scene-viewer/things-scene-viewer.html">
+
+<link rel="import" href="./things-resource-menu-content-behavior.html">
+
+<!--
+  Things-point와 연동하여 Scene Content를 화면에 표시. 
+  Scene 모니터링 (subscribe) 기능 포함 
+  메뉴 정보에 Scene 정보를 가져올 수 있도록 resource_url 필드가 설정되어야  함.
+-->
+
+<dom-module id="things-scene-content">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      things-scene-viewer {
+        @apply(--layout-flex)
+      }
+    </style>
+
+    <things-ws-subscriber id="subscriber"
+                          !auto
+                          url-key="wsUrl" 
+                          subject="[[subject]]">
+    </things-ws-subscriber>
+
+    <things-search-form  id="search-form"
+                         title="[[menuInfo.title]]"
+                         form-fields="[[searchFormFieldsInfo]]"
+                         action-url="[[viewerUrl]]" 
+                         last-response="{{response}}">
+    </things-search-form>   
+
+    <things-ajax  auto
+                  id="get-label"
+                  resource-url="[[menuInfo.resource_url]]"
+                  last-response="[[response]]">
+    </things-ajax>
+
+    <things-scene-viewer model="[[model]]"
+                         values="[[monitoringData]]"
+                         mode="1"
+                         fit="both"
+                         base-url="[[globals.baseUrl]]">
+    </things-scene-viewer>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'things-scene-content',
+
+      behaviors: [
+        Things.ResourceMenuContentBehavior,
+        Things.GlobalBehavior
+      ],
+
+      properties: {
+
+        /**
+         * Viewer 조회 URL
+         */
+        viewerUrl: {
+          type: String,
+          observer: 'viewerUrlChanged'
+        },
+
+        /**
+         * 검색 폼 내용 
+         */
+        searchFormFieldsInfo: {
+          type: Array,
+          value: function() {
+            return [ {
+              label: Things.DataGlobal.t('label.start'),
+              name: 'start',
+              op: 'eq',
+              searchForm: true,
+              type: 'tristate-radio'
+            } ];
+          }
+        },
+
+        /**
+         * Scene Model
+         */
+        model: {
+          type: Object
+        },
+
+        /**
+         * Scene 정보 조회 후 ...
+         */
+        response: {
+          type: Object,
+          observer: 'responseChanged'
+        },
+
+        /**
+         * Subscribe 할 채널 명 
+         */
+        subject: {
+          type: String
+        },
+
+        /**
+         * 모니터링 데이터 
+         */
+        monitoringData: {
+          type: Object
+        }        
+      },
+
+      observers: [
+        'viewerMenuInfoChanged(menuInfo)'
+      ],
+
+      listeners: {
+        'search-form.things-search-form-configured' : 'searchFormConfigured',
+        'search-form.things-tristate-radio-value-changed' : '_startValueChanged'
+      },
+
+      /**
+       * 메뉴 정보 변경시 
+       */
+      viewerMenuInfoChanged: function(menuInfo) {
+        this.viewerUrl = menuInfo.resource_url;
+      },
+
+      /**
+       * Viewer URL 변경시  
+       */
+      viewerUrlChanged: function(viewerUrl) {
+        this.$['search-form'].submitMyForm();
+      },
+
+      /**
+       * 검색 폼 구성 후 
+       */
+      searchFormConfigured: function(e) {
+        this.$['search-form'].submitMyForm();
+      },
+
+      /**
+       * Scene 정보 조회 후 모델 설정 
+       */
+      responseChanged: function(data) {
+        if(data) {
+          this.model = JSON.parse(data.model);
+          this.subject = '/elidom/stomp/topic/hatiolab-hq/smart/' + data.name;
+        }
+      },
+
+      /**
+       * 검색 폼에서 start 라디오 버튼 값 변경시 
+       */
+      _startValueChanged: function(e) {
+        e.preventDefault();
+
+        var control = e.detail;
+        if(control == 'yes') {
+          this.startMonitor();
+        } else {
+          this.stopMonitor();
+        }
+      },
+
+      /**
+       * Start monitoring
+       */
+      startMonitor: function() {
+        var connected = this.$.subscriber.status();
+        if(!connected) {
+          this.$.subscriber.callback = this.messageReceived.bind(this);
+          this.$.subscriber.start();
+        }
+      },
+
+      /**
+       * Stop monitoring
+       */
+      stopMonitor: function() {
+        var connected = this.$.subscriber.status();
+        if(connected) {
+          this.$.subscriber.stop();
+        }
+      },
+
+      /**
+       * 모니터링 데이터를 받음 ...
+       */
+      messageReceived: function(message) {
+        this.monitoringData = message;
+      }
+    });
+  </script>
+</dom-module>
