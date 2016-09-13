@@ -196,7 +196,9 @@ Things.ResourceMenuContentBehaviorImpl = {
 			if(event.detail && event.detail.initialParams) {
 				var initialParams = event.detail.initialParams;
 				delete initialParams['path'];
-				this.initialSearchParams = initialParams;
+				if(JSON.stringify(initialParams) !== JSON.stringify({})) {
+					this.initialSearchParams = initialParams;
+				}
 			}
 		}.bind(this));
 	},	

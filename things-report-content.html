@@ -1,7 +1,15 @@
 <link rel="import" href="../polymer/polymer.html">
 
+<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="../things-form/things-resource-form.html">
+<link rel="import" href="../things-form/things-search-form.html">
 <link rel="import" href="../things-meta-view/things-diy-based-grid.html">
 <link rel="import" href="./things-resource-menu-content-behavior.html">
+
+<!--
+	메뉴 설정 데이터를 기반데이터 루디 리포트 화면용 Content
+	반드시 메뉴에 DiyGrid 명이 설정되어야 한다. 
+-->
 
 <dom-module id="things-report-content">
 	<template>
@@ -11,28 +19,26 @@
 				@apply(--layout-vertical);
 				@apply(--layout-flex);
 			}
-			things-layout-gaia {
-				@apply(--layout-flex);
-			}
 		</style>
 
-    <things-ajax 
-      auto
-      id="resource-meta"
-      method="GET"
-      resource-url="[[menuMetaUrl]]"
-      last-response="{{metaData}}">
-    </things-ajax>
+		<things-ajax 
+			auto
+			id="resource-meta"
+			method="GET"
+			resource-url="[[menuMetaUrl]]"
+			last-response="{{metaData}}">
+		</things-ajax>
 
-    <things-search-form 
-      id="search-form"
-      title="[[menuInfo.title]]"
-      form-fields="[[searchFormFields]]" 
-      action-url="[[menuInfo.resource_url]]" 
-      page="{{page}}"
-      per-page="[[perPage]]"
-      last-response="{{lastResponse}}">
-    </things-search-form>
+		<things-search-form 
+			id="search-form"
+			form-fields="[[searchFormFields]]" 
+			select-fields="[[selectFields]]"
+			sort-fields="[[sortFields]]"
+			action-url="[[menuInfo.resource_url]]" 
+			page="{{page}}"
+			per-page="[[perPage]]"
+			last-response="{{lastResponse}}">
+		</things-search-form>
 
 		<things-diy-based-grid
 			id='grid'
