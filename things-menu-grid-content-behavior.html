@@ -1,0 +1,98 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-signals/iron-signals.html">
+
+<link rel="import" href="./things-menu-content-behavior.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 메뉴 설정을 기반으로 한 화면 중에서 그리드가 존재하는 화면에 대한 액션 정의 Behavior
+ *
+ * @polymerBehavior Things.MenuGridContentBehavior
+ */
+Things.MenuGridContentBehaviorImpl = {
+
+	properties: {
+		/**
+		 * Detail 버튼을 활성화 시킬 지 여부
+		 */
+		enableDetailColumn: {
+			type: Boolean,
+			value: false
+		},
+
+		/**
+		 * 그리드 Height
+		 * -1 이면 layout flex가 적용되고 -1이 아니면 설정된 gridHeight가 적용됨 
+		 */
+		gridHeight: {
+			type: Number,
+			notify: true,
+			value: -1
+		}
+	},
+
+	observers: [
+		'readyToConfig(menuInfo)'
+	],
+
+	/**
+	 * Life Cycle - Ready
+	 */
+	ready: function() {
+		var grid = this.getResourceGrid();
+		if(grid) {
+			this.listen(grid, 'things-grid-configured', 'refreshData');
+			this.listen(grid, 'things-grid-save-success', 'refreshData');  
+			this.listen(grid, 'things-grid-handle-open-import', 'openImportDialog');
+		}
+	},
+
+	/**
+	 * Route Changed
+	 */
+	readyToConfig: function(menuInfo) {
+		var resourceGrid = this.getResourceGrid();
+		if(resourceGrid) {
+			resourceGrid.enableDetailColumn = menuInfo.detail_form_id ? true : false;
+			resourceGrid.paginatable = menuInfo.pagination;
+			var eventName = 'things-routing-changed-' + menuInfo.routing;
+
+			document.addEventListener(eventName, function(event) {
+				resourceGrid.resizeGrid();
+			}.bind(this));			
+		}
+	},
+
+	/**
+	 * Resource Grid를 리턴한다.
+	 */
+	getResourceGrid: function() {
+		return this.$.grid;
+	},
+
+	/**
+	 * Reload Grid. 서치 폼에서 다시 검색한다.
+	 */
+	refreshGridData: function(grid) {
+		this.refreshData();
+	},
+
+	/**
+	 * Import Dialog를 오픈한다.
+	 */
+	openImportDialog: function(event) {
+		event.preventDefault();
+		app.$['import-dialog'].open(this.gridConfig, this.gridModel, this.gridColumns, this.menuInfo);
+	}
+};
+
+Things.MenuGridContentBehavior = [
+	Things.MenuGridContentBehaviorImpl,
+	Things.MenuContentBehavior
+];
+
+</script>

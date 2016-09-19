@@ -1,0 +1,79 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../things-detail/things-menu-detail-opener.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 디테일 View Behavior
+ *
+ * @polymerBehavior Things.DetailViewBehavior
+ */
+Things.DetailViewBehavior = {
+
+	/**
+	 * Life Cycle - Ready
+	 */
+	ready: function() {
+		var grid = this.$['grid'];
+		if(grid) {
+			this.listen(grid, 'things-grid-detail-tap', 'showDetailView');
+		}
+	},
+
+	/**
+	 * 디테일 뷰를 표시한다.
+	 *
+	 * @param {Event} event 그리드에서 선택된 event
+	 */
+	showDetailView: function(event) {
+		var record = event.detail;
+
+		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
+			this.showResourceForm(record);
+
+		} else if(this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == 'things-resource-detail') {
+			this.showDetailView(record);
+
+		} else if(this.menuInfo.detail_form_id != 'custom') {
+			this.showCustomView(this.menuInfo.detail_form_id, record);
+		}
+	},
+	
+	/**
+	 * 표준화된 리소스 디테일 폼을 표시한다.
+	 *
+	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
+	 */
+	showResourceForm: function(selectedRecord) {
+		var resourceForm = this.$['resource-form'];
+		resourceForm.resource = selectedRecord;
+	},
+
+	/**
+	 * 표준화된 리소스 디테일 폼을 표시한다.
+	 *
+	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
+	 */
+	showDetailForm: function(selectedRecord) {
+		// TODO
+	},
+
+	/**
+	 * 프레임 웍에서 기본으로 제공하지 않는 리소스 디테일 폼을 표시한다.
+	 *
+	 * @param {String} detailViewId 상세 뷰 아이디 
+	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
+	 */
+	showCustomView: function(detailViewId, selectedRecord) {
+		if(!this.customDetailView) {
+			this.customDetailView = document.createElement(detailViewId);
+		}
+
+		this.customDetailView.resource = selectedRecord;
+	}
+};
+
+</script>

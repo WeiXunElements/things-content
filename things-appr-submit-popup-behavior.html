@@ -1,0 +1,71 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-signals/iron-signals.html">
+
+<link rel="import" href="../things-view-open-behavior/things-view-open-behavior.html">
+
+<link rel="import" href="./things-detail-popup-behavior.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 심사 승인을 위한 기안 팝업 디테일 Behavior
+ *
+ * @polymerBehavior Things.ApprSubmitPopupBehavior
+ */
+Things.ApprSubmitPopupBehaviorImpl = {
+
+	/**
+	 * Life Cycle - Ready
+	 */
+	ready: function() {
+		var grid = this.$['grid'];
+		if(grid) {
+			this.listen(grid, 'things-grid-handle-request-release', 'showRequestReleaseForm');
+		}
+	},
+
+	/**
+	 * 승인 요청 폼 화면에 표시
+	 *
+	 * @param {Event} event 그리드에서 선택된 event
+	 */
+	showRequestReleaseForm: function(event) {
+		var viewElement = document.createElement('things-base-works-request-release-form');
+		var selectedRecord = event.detail.row;
+
+		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
+			var detailView = document.createElement('things-resource-form');
+			detailView.id = 'detail-view';
+			detailView.formFields = this.resourceFormFields;
+			detailView.removeFieldsOnSave = this.ignoreFieldsOnSave;
+			detailView.resourceType = this.menuInfo.resource_name;
+			detailView.resourceId = selectedRecord ? selectedRecord.id : null;
+			detailView.resourceUrl = this.menuInfo.resource_url;			
+			viewElement.detailView = detailView;
+
+		// TODO
+		} else if(this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == 'things-resource-detail') {
+			if(this.menuInfo.detail_layout) {
+				viewElement.menuInfo = null;
+				viewElement.menuInfo = this.menuInfo;
+				viewElement.resource = selectedRecord || selectedRecord[0];
+				viewElement.resourceFormFields = this.resourceFormFields;
+			}
+		}
+
+		viewElement.title = Things.DataGlobal.t('label.appr_doc');
+		viewElement.resourceType = this.menuInfo.resource_name;
+		viewElement.menuId = this.menuInfo.id;
+		this.openPopupView(viewElement, true);
+	}
+};
+
+Things.ApprSubmitPopupBehavior = [
+	Things.ApprSubmitPopupBehaviorImpl,
+	Things.ViewOpenBehavior
+];
+
+</script>
