@@ -1,0 +1,93 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/social-icons.html">
+<link rel="import" href="../iron-icons/maps-icons.html">
+<link rel="import" href="../iron-iconset/iron-iconset.html">
+<link rel="import" href="../iron-iconset-svg/iron-iconset-svg.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="../things-button/things-button.html">
+<link rel="import" href="../things-form/things-resource-form.html">
+<link rel="import" href="../things-form/things-search-form.html">
+<link rel="import" href="../things-full-dialog/things-full-dialog.html">
+<link rel="import" href="../things-grid/things-resource-grid.html">
+
+<link rel="import" href="./things-menu-grid-content-behavior.html">
+<link rel="import" href="./things-detail-popup-behavior.html">
+
+<!--
+메뉴 설정 정보를 기반으로 그리드 기반의 화면을 제공하는 화면 셋. 
+Detail View 및 추가, 저장, 삭제, 임포트 기본 기능은 없다.
+
+	Example:
+
+	<things-menu-grid-content 
+		menu-info="{{menuInfo}}">
+	</things-menu-grid-content>
+
+@demo ./things-content/demo/index.html
+-->
+
+<dom-module id="things-menu-grid-content">
+	<template>
+		<style>
+			:host {
+				display: block;
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
+			
+			things-resource-grid {
+				@apply(--layout-flex);
+			}
+		</style>
+
+		<things-ajax 
+			auto
+			id="resource-meta"
+			method="GET"
+			resource-url="[[menuMetaUrl]]"
+			last-response="{{metaData}}">
+		</things-ajax>
+
+		<things-search-form 
+			id="search-form"
+			form-fields="[[searchFormFields]]" 
+			select-fields="[[selectFields]]"
+			sort-fields="[[sortFields]]"
+			action-url="[[menuInfo.resource_url]]" 
+			page="{{page}}"
+			limit="[[limit]]"
+			last-response="{{lastResponse}}">
+		</things-search-form>
+
+		<things-resource-grid 
+			id="grid"
+			grid-height="[[gridHeight]]"
+			model="[[gridModel]]" 
+			columns="[[gridColumns]]"
+			config="[[gridConfig]]"
+			buttons="[[buttons]]"
+			current-page="{{page}}"
+			limit="{{limit}}"
+			data="[[items]]"
+			total-count="[[itemCount]]"
+			fixed-column-count="[[menuInfo.fixed_columns]]"
+			export-file-name="[[menuInfo.title]]"
+			export-sheet-name="[[menuInfo.title]]">
+		</things-resource-grid>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'things-menu-grid-content',
+
+			behaviors: [
+				Things.MenuGridContentBehavior
+			]
+		});
+	</script>
+</dom-module>
