@@ -62,8 +62,8 @@ Things.MenuGridContentBehaviorImpl = {
 			var eventName = 'things-routing-changed-' + menuInfo.routing;
 
 			document.addEventListener(eventName, function(event) {
-				resourceGrid.resizeGrid();
-			}.bind(this));			
+				if(resourceGrid.resizeGrid) resourceGrid.resizeGrid();
+			}.bind(this));
 		}
 	},
 
