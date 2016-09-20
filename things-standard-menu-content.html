@@ -100,8 +100,10 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 				diy-template-id="[[menuInfo.diy_template_id]]">
 			</things-resource-grid>
 
-			<div class="flexchild layout vertical">
-				<span class="subtitle">Detail</span>
+			<div class="flexchild layout vertical" hidden="[[!showDetailForm]]">
+				<div>
+					<span class="subtitle" on-tap="foldBtnTap">[[title]]</span>
+				</div>
 
 				<things-resource-form
 					id="resource-form" 
@@ -131,6 +133,15 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 				 */
 				resourceSaveUrl: {
 					type: String
+				},
+
+				title: {
+					type: String
+				},
+
+				showDetailForm: {
+					type: Boolean,
+					value: false
 				}
 			},
 
@@ -139,11 +150,28 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 			],
 
 			listeners: {
-				'resource-form.things-detail-form-save-success' : 'refreshData'
+				'resource-form.things-detail-form-save-success' : 'refreshData',
+				'grid.things-grid-detail-tap': 'detailTapped'
 			},
 
 			menuConfigChanged: function(menuInfo) {
 				this.resourceSaveUrl = menuInfo.resource_url + '/:id';
+			},
+
+			/**
+			 * 그리드의 detail 버튼 클릭시 detailForm을 보여준다. 
+			 */
+			detailTapped: function(data) {
+				this.title = data.detail.title;
+				this.showDetailForm = true;
+			},
+
+			/**
+			 * detailForm의 fold 버튼 클릭시 detail form을 숨김
+			 */
+			foldBtnTap: function() {
+				this.showDetailForm = false;	
+				this.$.grid.resizeGrid();
 			}
 		});
 	</script>
