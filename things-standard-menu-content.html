@@ -162,7 +162,7 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 			 * 그리드의 detail 버튼 클릭시 detailForm을 보여준다. 
 			 */
 			detailTapped: function(data) {
-				this.title = data.detail.title;
+				this.title = (data.detail.title) ? data.detail.title : (data.detail.name) ? data.detail.name : 'detail';
 				this.showDetailForm = true;
 			},
 
