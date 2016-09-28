@@ -86,7 +86,14 @@ Things.MenuGridContentBehaviorImpl = {
 	 */
 	openImportDialog: function(event) {
 		event.preventDefault();
-		app.$['import-dialog'].open(this.gridConfig, this.gridModel, this.gridColumns, this.menuInfo);
+
+		var event = {};
+		event.config = this.gridConfig;
+		event.model = this.gridModel;
+		event.columns = this.gridColumns;
+		event.menuInfo = this.menuInfo;
+
+		this.fire('things-import-dialog-toggle', event);
 	}
 };
 
