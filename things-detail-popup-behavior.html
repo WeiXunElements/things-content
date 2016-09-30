@@ -59,7 +59,9 @@ Things.DetailPopupBehaviorImpl = {
 	showResourceForm: function(selectedRecord, saveCallback) {
 		var viewElement = document.createElement('things-resource-form');
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		this.openPopupView(viewElement, true);
+    var eventDetail = { view: viewElement, modal: true };
+    var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
+    document.dispatchEvent(event);
 	},
 
 	/**
