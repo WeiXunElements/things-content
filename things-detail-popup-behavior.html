@@ -40,7 +40,7 @@ Things.DetailPopupBehaviorImpl = {
 
 		} else if(this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == 'things-resource-detail') {
 			if(this.menuInfo.detail_layout) {
-				var detail = { detail: { menuInfo: this.menuInfo, resource: event.detail, resourceFormFields: this.resourceFormFields }};
+				var detail = { detail: { menuInfo: this.menuInfo, resource: event.detail, resourceFormFields: this.resourceFormFields, closeCallback: this.refreshGridData.bind(this)}};
 				var customEvent = new CustomEvent('things-open-menu-detail-view', detail);
 				document.dispatchEvent(customEvent);
 			}
@@ -59,7 +59,7 @@ Things.DetailPopupBehaviorImpl = {
 	showResourceForm: function(selectedRecord, saveCallback) {
 		var viewElement = document.createElement('things-resource-form');
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-    var eventDetail = { view: viewElement, modal: true };
+    var eventDetail = { view: viewElement, modal: true, closeCallback: this.refreshGridData.bind(this) };
     var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
     document.dispatchEvent(event);
 	},
