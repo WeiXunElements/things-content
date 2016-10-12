@@ -33,7 +33,7 @@
     <things-ws-subscriber id="subscriber"
                           !auto
                           url-key="wsUrl" 
-                          subject="[[subject]]">
+                          subject="[[publishSubject]]">
     </things-ws-subscriber>
 
     <things-search-form  id="search-form"
@@ -41,12 +41,24 @@
                          form-fields="[[searchFormFieldsInfo]]"
                          action-url="[[viewerUrl]]" 
                          last-response="{{response}}">
-    </things-search-form>   
+    </things-search-form>
 
     <things-ajax  auto
-                  id="get-label"
+                  id="get-menu-params"
+                  resource-url="menus/:id/menu_params"
+                  resource-id="[[menuInfo.id]]"
+                  last-response="{{menuParams}}">
+    </things-ajax>
+
+    <things-ajax  auto
+                  id="get-scene"
                   resource-url="[[menuInfo.resource_url]]"
                   last-response="[[response]]">
+    </things-ajax>
+
+    <things-ajax  id="polling-ajax"
+                  resource-url="[[pollingUrl]]"
+                  last-response="{{pollingResponse}}">
     </things-ajax>
 
     <things-scene-viewer model="[[model]]"
@@ -73,6 +85,14 @@
         viewerUrl: {
           type: String,
           observer: 'viewerUrlChanged'
+        },
+
+        /**
+         * menu id를 이용하여 menu param을 조회한 결과
+         */
+        menuParams: {
+          type: Array,
+          observer: 'menuParamsChanged'
         },
 
         /**
@@ -107,9 +127,39 @@
         },
 
         /**
-         * Subscribe 할 채널 명 
+         * polling interval (second)
          */
-        subject: {
+        pollingInterval: {
+          type: String,
+          value: 10
+        },
+
+        /**
+         * polling target url
+         */
+        pollingUrl: {
+          type: String
+        },
+
+        /**
+         * polling에 의한 response
+         */
+        pollingResponse: {
+          type: Array,
+          observer: 'pollingResponseChanged'
+        },
+
+        /**
+         * async Polling
+         */
+        _asyncPolling: {
+          type: Object
+        },
+
+        /**
+         * publish subject
+         */
+        publishSubject: {
           type: String
         },
 
@@ -118,7 +168,7 @@
          */
         monitoringData: {
           type: Object
-        }        
+        }
       },
 
       observers: [
@@ -126,8 +176,14 @@
       ],
 
       listeners: {
-        'search-form.things-search-form-configured' : 'searchFormConfigured',
-        'search-form.things-tristate-radio-value-changed' : '_startValueChanged'
+        'search-form.things-search-form-configured' : 'searchFormConfigured'
+      },
+
+      ready: function() {
+        document.addEventListener('things-toggle-play-pages', function(event) {
+          var power = event.detail;
+          this.playPagesToggled(power);
+        }.bind(this));
       },
 
       /**
@@ -135,6 +191,24 @@
        */
       viewerMenuInfoChanged: function(menuInfo) {
         this.viewerUrl = menuInfo.resource_url;
+      },
+
+      /**
+       * fullscreen 변경시 event listener
+       */
+      playPagesToggled: function(power) {
+        if(power == 'on' && this.publishSubject) {
+          this.startSubscribe();
+        } 
+
+        if (power == 'on' && this.pollingUrl) {
+          this.startPolling();
+        }
+
+        if (power == 'off') {
+          this.stopSubscribe();
+          this.stopPolling();
+        }
       },
 
       /**
@@ -157,28 +231,32 @@
       responseChanged: function(data) {
         if(data) {
           this.model = JSON.parse(data.model);
-          this.subject = '/elidom/stomp/topic/hatiolab-hq/smart/' + data.name;
+          this.publishSubject = '/elidom/stomp/topic/hatiolab-hq/smart/' + data.name;
         }
       },
 
       /**
-       * 검색 폼에서 start 라디오 버튼 값 변경시 
+       * menuParam이 변화하면
+       * pollingInterval, pollingUrl, publishSubject를 초기화
        */
-      _startValueChanged: function(e) {
-        e.preventDefault();
+      menuParamsChanged: function(menuParams) {
+        var me = this;
 
-        var control = e.detail;
-        if(control == 'yes') {
-          this.startMonitor();
-        } else {
-          this.stopMonitor();
-        }
+        menuParams.forEach(function(item) {
+          if(item.name == 'polling_interval') {
+            me.pollingInterval = item.value;
+          } else if (item.name == 'polling_url') {
+            me.pollingUrl = item.value;
+          } else if (item.name == 'publish_subject') {
+            me.publishSubject = item.value;
+          }
+        });
       },
 
       /**
        * Start monitoring
        */
-      startMonitor: function() {
+      startSubscribe: function() {
         var connected = this.$.subscriber.status();
         if(!connected) {
           this.$.subscriber.callback = this.messageReceived.bind(this);
@@ -189,11 +267,35 @@
       /**
        * Stop monitoring
        */
-      stopMonitor: function() {
+      stopSubscribe: function() {
         var connected = this.$.subscriber.status();
         if(connected) {
           this.$.subscriber.stop();
         }
+      },
+
+      /**
+       * polling async start
+       */
+      startPolling: function() {
+        this._asyncPolling = this.async(this.startPolling, this.pollingInterval);
+        this.$['polling-ajax'].generateRequest();
+      },
+
+      /**
+       * polling async clear and stop
+       */
+      stopPolling: function() {
+        if(!this._asyncPolling) return;
+        this.cancelAsync(this._asyncPolling);
+        this._asyncPolling = null;
+      },
+
+      /**
+       * polling data responsed
+       */
+      pollingResponseChanged: function(data) {
+        this.messageReceived(data);
       },
 
       /**
