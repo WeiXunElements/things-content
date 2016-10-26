@@ -9,6 +9,7 @@
 <link rel="import" href="../things-scene-viewer/things-scene-viewer.html">
 
 <link rel="import" href="./things-menu-content-behavior.html">
+<link rel="import" href="./things-monitoring-behavior.html">
 
 <!--
   Things-point와 연동하여 Scene Content를 화면에 표시. 
@@ -74,7 +75,8 @@
       is: 'things-scene-content',
 
       behaviors: [
-        Things.MenuContentBehavior
+        Things.MenuContentBehavior,
+        Things.MonitoringBehavior
       ],
 
       properties: {
@@ -184,6 +186,10 @@
           var power = event.detail;
           this.playPagesToggled(power);
         }.bind(this));
+
+        this.pullRequestCallback = this.pullRequest;
+        this.subscriberId = 'subscriber';
+        this.msgReceivedCallback = this.messageReceived;
       },
 
       /**
@@ -197,18 +203,8 @@
        * fullscreen 변경시 event listener
        */
       playPagesToggled: function(power) {
-        if(power == 'on' && this.publishSubject) {
-          this.startSubscribe();
-        } 
-
-        if (power == 'on' && this.pollingUrl) {
-          this.startPolling();
-        }
-
-        if (power == 'off') {
-          this.stopSubscribe();
-          this.stopPolling();
-        }
+        if(power == 'on') this.startCollectData();
+        if(power == 'off') this.stopCollectData();
       },
 
       /**
@@ -241,54 +237,19 @@
        */
       menuParamsChanged: function(menuParams) {
         var me = this;
-
         menuParams.forEach(function(item) {
-          if(item.name == 'polling_interval') {
+          if(item.name == 'polling-interval') {
             me.pollingInterval = item.value;
-          } else if (item.name == 'polling_url') {
-            me.pollingUrl = item.value;
-          } else if (item.name == 'publish_subject') {
-            me.publishSubject = item.value;
+          } else if (item.name == 'subscribe-subject') {
+            me.subscribeSubject = item.value;
+          } else if (item.name == 'collect-data-mode') {
+            me.collectDataMode = item.value;
           }
         });
       },
 
-      /**
-       * Start monitoring
-       */
-      startSubscribe: function() {
-        var connected = this.$.subscriber.status();
-        if(!connected) {
-          this.$.subscriber.callback = this.messageReceived.bind(this);
-          this.$.subscriber.start();
-        }
-      },
-
-      /**
-       * Stop monitoring
-       */
-      stopSubscribe: function() {
-        var connected = this.$.subscriber.status();
-        if(connected) {
-          this.$.subscriber.stop();
-        }
-      },
-
-      /**
-       * polling async start
-       */
-      startPolling: function() {
-        this._asyncPolling = this.async(this.startPolling, this.pollingInterval);
+      pullRequest: function() {
         this.$['polling-ajax'].generateRequest();
-      },
-
-      /**
-       * polling async clear and stop
-       */
-      stopPolling: function() {
-        if(!this._asyncPolling) return;
-        this.cancelAsync(this._asyncPolling);
-        this._asyncPolling = null;
       },
 
       /**
