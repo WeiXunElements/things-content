@@ -1,0 +1,117 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 모니터링 Behavior
+ *
+ * @polymerBehavior Things.MonitoringBehavior
+ */
+Things.MonitoringBehaviorImpl = {
+
+	properties: {
+
+		/**
+		 * 데이터 모드 - subscribe / pull
+		 */
+		collectDataMode: {
+			type: String,
+			value: 'pull'
+		},
+
+		/**
+		 * Polling interval (second)
+		 */
+		pollingInterval: {
+			type: String
+		},
+
+		/**
+		 * Pull Request Callback function
+		 * 화면에서 정의한 pull request ajax 호출 함수를 받는다.
+		 */
+		pullRequestCallback: {
+			type: Function
+		},
+
+		/**
+		 * subscribe를 통해 메시지를 전달 받았을 때의 콜백 함수
+		 * 화면에서 정의한 함수를 받는다.
+		 */
+		msgReceivedCallback: {
+			type: Function
+		},
+
+		/**
+		 * 화면에서 정의한 things-ws-subscriber의 id를 받는다.
+		 */
+		subscriberId: {
+			type: String
+		},
+
+		/**
+		 * Async polling
+		 */
+		_asyncPolling: {
+			type: Object
+		}
+	},
+
+	/**
+	 * Polling async start
+	 */
+	startCollectData: function() {
+		// Start Polling
+		if(this.collectDataMode == 'pull') {
+			if(this._asyncPolling == null) {
+				this.collectDataByPolling();
+			}
+
+		// Start Subscribe
+		} else {
+			var subscriber = this.$[this.subscriberId];
+			var connected = subscriber.status();
+			if(!connected) {
+				subscriber.callback = this.msgReceivedCallback.bind(this);
+				subscriber.start();
+			}
+		}
+	},
+
+	/**
+	 * Polling async clear and stop
+	 */
+	stopCollectData: function() {
+		// Stop Polling
+		if(this.collectDataMode == 'pull') {
+			if (this._asyncPolling) {
+				this.cancelAsync(this._asyncPolling);
+				this._asyncPolling = null;
+			}
+
+		// Stop Subscribe
+		} else {
+			var subscriber = this.$[this.subscriberId];
+			var connected = subscriber.status();
+			if(connected) {
+				subscriber.stop();
+			}
+		}
+	},	
+
+	/**
+	 * Collect Data By Polling 
+	 */
+	collectDataByPolling: function() {
+		this._asyncPolling = this.async(this.collectDataByPolling, this.pollingInterval);
+		this.pullRequestCallback();
+	}
+};
+
+Things.MonitoringBehavior = [
+	Things.MonitoringBehaviorImpl
+];
+
+</script>
