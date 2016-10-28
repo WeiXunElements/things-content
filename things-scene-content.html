@@ -193,7 +193,7 @@
        * 메뉴 정보 변경시 
        */
       viewerMenuInfoChanged: function(menuInfo) {
-        document.addEventListener('things-toggle-play-pages_' + menuInfo.routing, function(event) {
+        document.addEventListener('things-toggle-play-page_' + menuInfo.routing, function(event) {
           var power = event.detail;
           this.playPagesToggled(power);
         }.bind(this));
