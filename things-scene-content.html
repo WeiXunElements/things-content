@@ -163,15 +163,13 @@
        * 
        * pullRequestCallback: pull 혹은 pull-repeat 모드로 데이터를 조회할 때
        *                      behavior에서 데이터를 조회해올 함수들을 전달한다.
-       * subscriberId: subscribe 방식으로 데이터를 전달 받을 때 구현한 things-ws의
-       *               id들을 해당 websocket에 connection한다.
-       * msgReceivedCallback: 데이터를 저회 혹은 전달 받았을때 해당 데이터를 컨트롤하기
-       *                      위한 callback 함수를 정의한다.
+       * subscriberId: subscribe 모드로 데이터를 조회할 때 구현한 things-ws-subscriber의 id를 전달한다.
+       * subscriberCallback: subscribe모드를 통해 데이터를 전달 받을때 데이터 핸들링을 위한 callbaack
        */
       ready: function() {
         this.pullRequestCallback = this.pullRequest;
         this.subscriberId = 'subscriber';
-        this.msgReceivedCallback = this.messageReceived;
+        this.subscriberCallback = this.messageReceived;
       },
 
       /**
