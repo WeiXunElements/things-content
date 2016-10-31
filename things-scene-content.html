@@ -39,13 +39,6 @@
                           subject="[[publishSubject]]">
     </things-ws-subscriber>
 
-    <things-search-form  id="search-form"
-                         title="[[menuInfo.title]]"
-                         form-fields="[[searchFormFieldsInfo]]"
-                         action-url="[[viewerUrl]]" 
-                         last-response="{{response}}">
-    </things-search-form>
-
     <things-ajax  auto
                   id="get-menu-params"
                   resource-url="menus/:id/menu_params"
@@ -56,11 +49,11 @@
     <things-ajax  auto
                   id="get-scene"
                   resource-url="[[menuInfo.resource_url]]"
-                  last-response="[[response]]">
+                  last-response="{{response}}">
     </things-ajax>
 
     <things-ajax  id="polling-ajax"
-                  resource-url="[[pollingUrl]]"
+                  resource-url="[[pullUrl]]"
                   last-response="{{pollingResponse}}">
     </things-ajax>
 
@@ -82,37 +75,12 @@
       ],
 
       properties: {
-
-        /**
-         * Viewer 조회 URL
-         */
-        viewerUrl: {
-          type: String,
-          observer: 'viewerUrlChanged'
-        },
-
         /**
          * menu id를 이용하여 menu param을 조회한 결과
          */
         menuParams: {
           type: Array,
           observer: 'menuParamsChanged'
-        },
-
-        /**
-         * 검색 폼 내용 
-         */
-        searchFormFieldsInfo: {
-          type: Array,
-          value: function() {
-            return [ {
-              label: Things.DataGlobal.t('label.start'),
-              name: 'start',
-              op: 'eq',
-              searchForm: true,
-              type: 'tristate-radio'
-            } ];
-          }
         },
 
         /**
@@ -139,9 +107,9 @@
         },
 
         /**
-         * polling target url
+         * pull target url
          */
-        pollingUrl: {
+        pullUrl: {
           type: String
         },
 
@@ -168,6 +136,17 @@
         },
 
         /**
+         * 데이터 조회 모드
+         * 1. pull-repeat : 반복적으로 ajax 호출을 통해 데이터를 조회함
+         * 2. pull : routing 변경 발생시 ajax를 호출하여 데이터를 조회함
+         * 3. subscribe : Websocket을 통해 데이터를 전달받음
+         */
+        collectDataMode: {
+          type: String,
+          value: 'pull'
+        },
+
+        /**
          * 모니터링 데이터 
          */
         monitoringData: {
@@ -179,10 +158,16 @@
         'viewerMenuInfoChanged(menuInfo)'
       ],
 
-      listeners: {
-        'search-form.things-search-form-configured' : 'searchFormConfigured'
-      },
-
+      /**
+       * things-monitoring-behavior에 필요한 인자들을 초기화
+       * 
+       * pullRequestCallback: pull 혹은 pull-repeat 모드로 데이터를 조회할 때
+       *                      behavior에서 데이터를 조회해올 함수들을 전달한다.
+       * subscriberId: subscribe 방식으로 데이터를 전달 받을 때 구현한 things-ws의
+       *               id들을 해당 websocket에 connection한다.
+       * msgReceivedCallback: 데이터를 저회 혹은 전달 받았을때 해당 데이터를 컨트롤하기
+       *                      위한 callback 함수를 정의한다.
+       */
       ready: function() {
         this.pullRequestCallback = this.pullRequest;
         this.subscriberId = 'subscriber';
@@ -210,20 +195,6 @@
       },
 
       /**
-       * Viewer URL 변경시  
-       */
-      viewerUrlChanged: function(viewerUrl) {
-        this.$['search-form'].submitMyForm();
-      },
-
-      /**
-       * 검색 폼 구성 후 
-       */
-      searchFormConfigured: function(e) {
-        this.$['search-form'].submitMyForm();
-      },
-
-      /**
        * Scene 정보 조회 후 모델 설정 
        */
       responseChanged: function(data) {
@@ -246,10 +217,18 @@
             me.subscribeSubject = item.value;
           } else if (item.name == 'collect-data-mode') {
             me.collectDataMode = item.value;
+          } else if (item.name == 'pull-url') {
+            me.pullUrl = item.value;
           }
         });
+
+        this.startCollectData();
       },
 
+      /**
+       * pull 방식의 데이터 조회시 데이터를 조회할 ajax를 호출하는 함수
+       * things-monitoring-behavior에 callback 함수로 전달한다.
+       */
       pullRequest: function() {
         this.$['polling-ajax'].generateRequest();
       },
