@@ -14,6 +14,15 @@ Things.MonitoringBehaviorImpl = {
 	properties: {
 
 		/**
+		 * Scene Player 타입의 화면의 첫 페이지 routing 정보
+		 * scene player의 monitoring이 종료 되면 첫 페이지로 이동하고
+		 * 첫페이지에 할당된 monitoring 종료 event를 호출 하기 위해
+		 */
+    mainPage: {
+      type: String
+    },
+
+		/**
 		 * 데이터 모드 - subscribe / pull
 		 */
 		collectDataMode: {
@@ -26,6 +35,13 @@ Things.MonitoringBehaviorImpl = {
 		 */
 		pollingInterval: {
 			type: String
+		},
+
+		/**
+		 * 화면에서 정의한 things-ws-subscriber의 id를 받는다.
+		 */
+		subscriberId: {
+			type: Array
 		},
 
 		/**
@@ -45,13 +61,6 @@ Things.MonitoringBehaviorImpl = {
 		},
 
 		/**
-		 * 화면에서 정의한 things-ws-subscriber의 id를 받는다.
-		 */
-		subscriberId: {
-			type: String
-		},
-
-		/**
 		 * Async polling
 		 */
 		_asyncPolling: {
@@ -64,10 +73,13 @@ Things.MonitoringBehaviorImpl = {
 	 */
 	startCollectData: function() {
 		// Start Polling
-		if(this.collectDataMode == 'pull') {
+		if(this.collectDataMode == 'pull-repeat') {
 			if(this._asyncPolling == null) {
 				this.collectDataByPolling();
 			}
+
+		} else if(this.collectDataMode == 'pull') {
+			this.pullRequestCallback();
 
 		// Start Subscribe
 		} else {
@@ -85,7 +97,7 @@ Things.MonitoringBehaviorImpl = {
 	 */
 	stopCollectData: function() {
 		// Stop Polling
-		if(this.collectDataMode == 'pull') {
+		if(this.collectDataMode == 'pull' || this.collectDataMode == 'pull-repeat') {
 			if (this._asyncPolling) {
 				this.cancelAsync(this._asyncPolling);
 				this._asyncPolling = null;
@@ -99,6 +111,12 @@ Things.MonitoringBehaviorImpl = {
 				subscriber.stop();
 			}
 		}
+
+		// mainPage가 있다면 (scene player라면) mainPage에 player-stop_mainPage 이벤트를 호출한다.
+		if(this.mainPage) {
+      var playerOffEvent = new CustomEvent('things-player-stop_' + this.mainPage, { detail: 'off'});
+      document.dispatchEvent(playerOffEvent);
+		}
 	},	
 
 	/**
@@ -107,7 +125,20 @@ Things.MonitoringBehaviorImpl = {
 	collectDataByPolling: function() {
 		this._asyncPolling = this.async(this.collectDataByPolling, this.pollingInterval);
 		this.pullRequestCallback();
-	}
+	},
+
+
+  /**
+   * Route change handler - override
+   */
+  _handlerRouteChange: function(event) {
+    if(event.detail && event.detail.initialParams) {
+      this.mainPage = event.detail.initialParams.mainPage;
+    } else {
+      this.mainPage = null;
+    }
+    if(this.menuParams != null) this.startCollectData();
+  }	
 };
 
 Things.MonitoringBehavior = [
