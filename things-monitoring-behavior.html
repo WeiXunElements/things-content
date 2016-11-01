@@ -56,7 +56,7 @@ Things.MonitoringBehaviorImpl = {
 		 * subscribe를 통해 메시지를 전달 받았을 때의 콜백 함수
 		 * 화면에서 정의한 함수를 받는다.
 		 */
-		msgReceivedCallback: {
+		subscriberCallback: {
 			type: Function
 		},
 
@@ -86,7 +86,7 @@ Things.MonitoringBehaviorImpl = {
 			var subscriber = this.$[this.subscriberId];
 			var connected = subscriber.status();
 			if(!connected) {
-				subscriber.callback = this.msgReceivedCallback.bind(this);
+				subscriber.callback = this.subscriberCallback;
 				subscriber.start();
 			}
 		}

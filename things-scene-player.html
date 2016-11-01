@@ -148,9 +148,9 @@
        * Toggle play pages
        */
       togglePlayPages: function(power) {
-        if(power == 'on') {   
+        if(power == 'on') {
           this.startPlayPages();
-        } else {      
+        } else {
           this.stopPlayPages();
         }        
       },
@@ -178,6 +178,11 @@
         this._asyncPlayer = null;
         this._playingIndex = 0;
         page('/' + this.menuInfo.routing);
+
+        this.playPageList.forEach(function(page) {
+          var stopChildPages = new CustomEvent('things-toggle-play-page_' + page, { detail: 'off'});
+          document.dispatchEvent(stopChildPages);
+        })
       },
 
       /**
