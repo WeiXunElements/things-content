@@ -45,9 +45,13 @@ Things.MenuGridContentBehaviorImpl = {
 	ready: function() {
 		var grid = this.getResourceGrid();
 		if(grid) {
-			this.listen(grid, 'things-grid-configured', 'refreshData');
 			this.listen(grid, 'things-grid-save-success', 'refreshData');  
 			this.listen(grid, 'things-grid-handle-open-import', 'openImportDialog');
+
+			var searchForm = this.getResourceSearchForm();
+			if(!searchForm) {
+				this.listen(grid, 'things-grid-configured', 'refreshData');
+			}
 		}
 	},
 
