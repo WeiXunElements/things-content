@@ -46,7 +46,7 @@ Things.DetailPopupBehaviorImpl = {
 			}
 
 		} else if(this.menuInfo.detail_form_id != 'custom') {
-			this.showCustomView(this.menuInfo.detail_form_id, event.detail, this.refreshGridData);
+			this.showCustomView(this.menuInfo.detail_form_id, event.detail, this.refreshGridData.bind(this));
 		}
 	},
 	
@@ -75,6 +75,7 @@ Things.DetailPopupBehaviorImpl = {
 		var viewElement = document.createElement(detailViewId);
 		viewElement.attachable = true;
 		viewElement.propExtensible = true;
+		viewElement.saveCallback = saveCallback;
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
 		viewElement.showDetailView(selectedRecord.id, selectedRecord);
 	},
