@@ -35,8 +35,10 @@ Things.DetailPopupBehaviorImpl = {
 	 * @param {Event} event 그리드에서 선택된 event
 	 */
 	showDetailView: function(event) {
+		if(!event.detail.id) return;
+
 		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
-			this.showResourceForm(event.detail, this.refreshGridData);
+			this.showResourceForm(event.detail, this.refreshGridData.bind(this));
 
 		} else if(this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == 'things-resource-detail') {
 			if(this.menuInfo.detail_layout) {
@@ -59,9 +61,9 @@ Things.DetailPopupBehaviorImpl = {
 	showResourceForm: function(selectedRecord, saveCallback) {
 		var viewElement = document.createElement('things-resource-form');
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-    var eventDetail = { view: viewElement, modal: true, closeCallback: this.refreshGridData.bind(this) };
-    var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
-    document.dispatchEvent(event);
+		var eventDetail = { view: viewElement, modal: true, closeCallback: saveCallback };
+		var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
+		document.dispatchEvent(event);
 	},
 
 	/**
@@ -77,7 +79,7 @@ Things.DetailPopupBehaviorImpl = {
 		viewElement.propExtensible = true;
 		viewElement.saveCallback = saveCallback;
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		viewElement.showDetailView(selectedRecord.id, selectedRecord);
+		viewElement.showDetailView(selectedRecord.id, selectedRecord, null, saveCallback);
 	},
 
 	/**
