@@ -109,7 +109,16 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 	 */
 	_setViewConfig: function(elementId, viewElement, selectedRecord, trxCallback) {
 		viewElement.id = elementId;
-		viewElement.title = this.menuInfo.title + (selectedRecord && selectedRecord.name ? ' (' + selectedRecord.name + ')' : '');
+
+		var title = '';
+		if(selectedRecord && selectedRecord.name && selectedRecord.description) {
+			title = selectedRecord.name + ' ( ' + selectedRecord.description +' )';
+		} else if (selectedRecord && selectedRecord.name) {
+			title = selectedRecord.name;
+		} else {
+			title = this.menuInfo.title;
+		}
+		
 		viewElement.formFields = this.resourceFormFields;
 		viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
 		viewElement.resourceType = this.menuInfo.resource_name;
