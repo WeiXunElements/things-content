@@ -35,7 +35,7 @@ Things.DetailPopupBehaviorImpl = {
 	 * @param {Event} event 그리드에서 선택된 event
 	 */
 	showDetailView: function(event) {
-		if(!event.detail.id) return;
+		if(event.defaultPrevented || !event || !event.detail || !event.detail.id) return;
 
 		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
 			this.showResourceForm(event.detail, this.refreshGridData.bind(this));
