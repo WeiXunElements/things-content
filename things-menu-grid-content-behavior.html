@@ -18,7 +18,7 @@ Things.MenuGridContentBehaviorImpl = {
 	properties: {
 		/**
 		 * Detail 버튼을 활성화 시킬 지 여부
-		 */
+		 ******/
 		enableDetailColumn: {
 			type: Boolean,
 			value: false
@@ -26,8 +26,8 @@ Things.MenuGridContentBehaviorImpl = {
 
 		/**
 		 * 그리드 Height
-		 * -1 이면 layout flex가 적용되고 -1이 아니면 설정된 gridHeight가 적용됨 
-		 */
+		 * -1 이면 layout flex가 적용되고 -1이 아니면 설정된 gridHeight가 적용됨
+		 ******/
 		gridHeight: {
 			type: Number,
 			notify: true,
@@ -45,7 +45,7 @@ Things.MenuGridContentBehaviorImpl = {
 	ready: function() {
 		var grid = this.getResourceGrid();
 		if(grid) {
-			this.listen(grid, 'things-grid-save-success', 'refreshData');  
+			this.listen(grid, 'things-grid-save-success', 'refreshData');
 			this.listen(grid, 'things-grid-handle-open-import', 'openImportDialog');
 
 			var searchForm = this.getResourceSearchForm();

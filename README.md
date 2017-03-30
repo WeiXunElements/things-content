@@ -1,6 +1,6 @@
 # things-content
 
-An element providing a starting point for your own reusable Polymer elements.
+#### 화면 표시에 대한 정보 컴포넌트
 
 
 ## Dependencies

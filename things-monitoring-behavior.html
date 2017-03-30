@@ -17,14 +17,14 @@ Things.MonitoringBehaviorImpl = {
 		 * Scene Player 타입의 화면의 첫 페이지 routing 정보
 		 * scene player의 monitoring이 종료 되면 첫 페이지로 이동하고
 		 * 첫페이지에 할당된 monitoring 종료 event를 호출 하기 위해
-		 */
+		 ******/
     mainPage: {
       type: String
     },
 
 		/**
 		 * 데이터 모드 - subscribe / pull
-		 */
+		 ******/
 		collectDataMode: {
 			type: String,
 			value: 'pull'
@@ -32,14 +32,14 @@ Things.MonitoringBehaviorImpl = {
 
 		/**
 		 * Polling interval (second)
-		 */
+		 ******/
 		pollingInterval: {
 			type: String
 		},
 
 		/**
 		 * 화면에서 정의한 things-ws-subscriber의 id를 받는다.
-		 */
+		 ******/
 		subscriberId: {
 			type: Array
 		},
@@ -47,7 +47,7 @@ Things.MonitoringBehaviorImpl = {
 		/**
 		 * Pull Request Callback function
 		 * 화면에서 정의한 pull request ajax 호출 함수를 받는다.
-		 */
+		 ******/
 		pullRequestCallback: {
 			type: Function
 		},
@@ -55,14 +55,14 @@ Things.MonitoringBehaviorImpl = {
 		/**
 		 * subscribe를 통해 메시지를 전달 받았을 때의 콜백 함수
 		 * 화면에서 정의한 함수를 받는다.
-		 */
+		 ******/
 		subscriberCallback: {
 			type: Function
 		},
 
 		/**
 		 * Async polling
-		 */
+		 ******/
 		_asyncPolling: {
 			type: Object
 		}
@@ -117,10 +117,10 @@ Things.MonitoringBehaviorImpl = {
       var playerOffEvent = new CustomEvent('things-player-stop_' + this.mainPage, { detail: 'off'});
       document.dispatchEvent(playerOffEvent);
 		}
-	},	
+	},
 
 	/**
-	 * Collect Data By Polling 
+	 * Collect Data By Polling
 	 */
 	collectDataByPolling: function() {
 		this._asyncPolling = this.async(this.collectDataByPolling, this.pollingInterval);
@@ -138,7 +138,7 @@ Things.MonitoringBehaviorImpl = {
       this.mainPage = null;
     }
     if(this.menuParams != null) this.startCollectData();
-  }	
+  }
 };
 
 Things.MonitoringBehavior = [

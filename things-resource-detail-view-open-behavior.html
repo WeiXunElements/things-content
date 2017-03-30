@@ -21,23 +21,23 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 
 	properties: {
 		/**
-		 * 트랜잭션 처리 후 이벤트 명 
-		 */
+		 * 트랜잭션 처리 후 이벤트 명
+		 ******/
 		trxEventName: {
 			type: String
 		},
 
 		/**
-		 * 트랜잭션 처리 후 팝업 Close 여부 
-		 */
+		 * 트랜잭션 처리 후 팝업 Close 여부
+		 ******/
 		closeAfterTrx: {
 			type: Boolean,
 			value: false
 		},
 
 		/**
-		 * 트랜잭션 콜백 
-		 */
+		 * 트랜잭션 콜백
+		 ******/
 		trxCallback: {
 			type: Object
 		}
@@ -54,11 +54,11 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 
 		} else if(this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == 'things-resource-detail') {
 			if(this.menuInfo.detail_layout) {
-				var detail = { 
-					detail: { 
-						menuInfo: this.menuInfo, 
-						resource: resource, 
-						resourceFormFields: this.resourceFormFields, 
+				var detail = {
+					detail: {
+						menuInfo: this.menuInfo,
+						resource: resource,
+						resourceFormFields: this.resourceFormFields,
 						closeCallback: this.trxCallback
 					}
 				};
@@ -71,12 +71,12 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 			this.showCustomView(this.menuInfo.detail_form_id, resource, this.trxCallback);
 		}
 	},
-	
+
 	/**
 	 * 표준화된 리소스 디테일 폼을 표시한다.
 	 *
 	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
-	 * @param {Function} trxCallback 저장 후 콜백 함수 
+	 * @param {Function} trxCallback 저장 후 콜백 함수
 	 */
 	showResourceForm: function(selectedRecord, trxCallback) {
 		var viewElement = document.createElement('things-resource-form');
@@ -89,9 +89,9 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 	/**
 	 * 프레임 웍에서 기본으로 제공하지 않는 리소스 디테일 폼을 표시한다.
 	 *
-	 * @param {String} detailViewId 상세 뷰 아이디 
+	 * @param {String} detailViewId 상세 뷰 아이디
 	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
-	 * @param {Function} trxCallback 저장 후 콜백 함수 
+	 * @param {Function} trxCallback 저장 후 콜백 함수
 	 */
 	showCustomView: function(detailViewId, selectedRecord, trxCallback) {
 		var viewElement = document.createElement(detailViewId);
@@ -105,7 +105,7 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 	 * @param {String} elementId
 	 * @param {Object} viewElement
 	 * @param {Object} selectedRecord
-	 * @param {Function} trxCallback 저장 후 콜백 함수 
+	 * @param {Function} trxCallback 저장 후 콜백 함수
 	 */
 	_setViewConfig: function(elementId, viewElement, selectedRecord, trxCallback) {
 		viewElement.id = elementId;
@@ -118,7 +118,7 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 		} else {
 			title = this.menuInfo.title;
 		}
-		
+
 		viewElement.formFields = this.resourceFormFields;
 		viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
 		viewElement.resourceType = this.menuInfo.resource_name;
@@ -130,7 +130,7 @@ Things.ResourceDetailViewOpenBehaviorImpl = {
 			selectedRecord ? viewElement.resource = selectedRecord : '';
 			viewElement.resourceUrl = this.menuInfo.resource_url;
 		}
-		
+
 		if(this.trxEventName) {
 			viewElement.addEventListener(this.trxEventName, function(e) {
 				trxCallback.apply(this);

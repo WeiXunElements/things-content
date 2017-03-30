@@ -7,8 +7,8 @@
 <link rel="import" href="./things-monitoring-behavior.html">
 
 <!--
-  Things-point와 연동하여 Scene Content를 화면에 표시. 
-  Scene 모니터링 (subscribe) 기능 포함 
+  Things-point와 연동하여 Scene Content를 화면에 표시.
+  Scene 모니터링 (subscribe) 기능 포함
   메뉴 정보에 Scene 정보를 가져올 수 있도록 resource_url 필드가 설정되어야  함.
 -->
 
@@ -54,14 +54,14 @@
 
         /**
          * Scene Model
-         */
+         ******/
         model: {
           type: Object
         },
 
         /**
          * Scene 정보 조회 후 ...
-         */
+         ******/
         response: {
           type: Object,
           observer: 'responseChanged'
@@ -69,30 +69,30 @@
 
         /**
          * 화면 변경 주기 (화면 변경시 데이터를 조회함)
-         */
+         ******/
         playInterval: {
           type: String,
-          value: 3000          
+          value: 3000
         },
 
         /**
          * 메뉴 구성 과정에서 모니터링에 사용될 scene의 라우팅 정보를 받는다.
-         */
+         ******/
         playPages: {
           type: String,
           observer: '_playPagesChanged'
-        },        
+        },
 
         /**
          * 배열의 형태로 초기화된 scene들의 라우팅 정보
-         */
+         ******/
         playPageList: {
           type: Array
         },
 
         /**
          * 현재 play되고 있는 index
-         */
+         ******/
         _playingIndex: {
           type: Number,
           value: 0
@@ -100,7 +100,7 @@
 
         /**
          * Async player
-         */
+         ******/
         _asyncPlayer: {
           type: Object
         }
@@ -117,7 +117,7 @@
       },
 
       /**
-       * 메뉴 정보 변경시 
+       * 메뉴 정보 변경시
        */
       viewerMenuInfoChanged: function(menuInfo) {
         document.addEventListener('things-player-stop_' + menuInfo.routing, function(event) {
@@ -145,7 +145,7 @@
           this.startPlayPages();
         } else {
           this.stopPlayPages();
-        }        
+        }
       },
 
       /**
@@ -179,7 +179,7 @@
       },
 
       /**
-       * Scene 정보 조회 후 모델 설정 
+       * Scene 정보 조회 후 모델 설정
        */
       responseChanged: function(data) {
         if(data) {

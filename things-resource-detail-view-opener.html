@@ -3,7 +3,7 @@
 <link rel="import" href="./things-resource-detail-view-open-behavior.html">
 
 <!--
- 메뉴 명과 해당 메뉴의 리소스 정보로 해당 메뉴의 상세 뷰를 Open하는 컴포넌트 
+ 메뉴 명과 해당 메뉴의 리소스 정보로 해당 메뉴의 상세 뷰를 Open하는 컴포넌트
 -->
 <dom-module id="things-resource-detail-view-opener">
   <template>
@@ -13,36 +13,36 @@
                  last-response="{{metaData}}">
     </things-ajax>
   </template>
-  
+
   <script>
     Polymer({
       is: 'things-resource-detail-view-opener',
 
       properties: {
         /**
-         * 트랜잭션 처리 후 이벤트 명 
-         */
+         * 트랜잭션 처리 후 이벤트 명
+         ******/
         trxEventName: {
           type: String
         },
 
         /**
-         * 트랜잭션 처리 후 팝업 Close 여부 
-         */
+         * 트랜잭션 처리 후 팝업 Close 여부
+         ******/
         closeAfterTrx: {
           type: Boolean,
           value: false
         },
 
         /**
-         * 트랜잭션 콜백 
-         */
+         * 트랜잭션 콜백
+         ******/
         trxCallback: {
           type: Object
         }
       },
 
-      behaviors: [ 
+      behaviors: [
         Things.ResourceDetailViewOpenBehavior
       ]
     })
