@@ -118,6 +118,7 @@
 
       /**
        * 메뉴 정보 변경시
+       * *****
        */
       viewerMenuInfoChanged: function(menuInfo) {
         document.addEventListener('things-player-stop_' + menuInfo.routing, function(event) {
@@ -132,6 +133,7 @@
 
       /**
        * 전달받은 scene의 routing 정보들을 배열로 초기화
+       * *****
        */
       _playPagesChanged: function(pages) {
         this.playPageList = pages.split(',');
@@ -139,6 +141,7 @@
 
       /**
        * Toggle play pages
+       * *****
        */
       togglePlayPages: function(power) {
         if(power == 'on') {
@@ -150,6 +153,7 @@
 
       /**
        * Start play pages
+       * *****
        */
       startPlayPages: function() {
         var playingCount = this.playPageList ? this.playPageList.length : 0;
@@ -164,6 +168,7 @@
 
       /**
        * Stop play pages
+       * *****
        */
       stopPlayPages: function() {
         if(!this._asyncPlayer) return;
@@ -180,6 +185,7 @@
 
       /**
        * Scene 정보 조회 후 모델 설정
+       * *****
        */
       responseChanged: function(data) {
         if(data) {

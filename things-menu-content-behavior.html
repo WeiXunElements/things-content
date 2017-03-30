@@ -86,6 +86,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * 초기 검색 파라미터 설정
+	 * *****
 	 */
 	_initialSearchParamsChanged: function(initialSearchParams) {
 		var searchForm = this.getResourceSearchForm();
@@ -97,6 +98,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * Resource Search Form을 리턴한다.
+	 * *****
 	 */
 	getResourceSearchForm: function() {
 		return this.$['search-form'];
@@ -104,6 +106,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * ID Field를 리턴한다.
+	 * *****
 	 */
 	getIdField: function() {
 		return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
@@ -111,6 +114,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * Title Field를 리턴한다.
+	 * *****
 	 */
 	getTitleField: function() {
 		return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
@@ -118,7 +122,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * 메뉴 메타데이터 변경시
-   *
+   ******
 	 * @param {Object} menuInfo
 	 */
 	_menuInfoChanged: function(menuInfo) {
@@ -137,6 +141,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * Route Changed
+	 * *****
 	 */
 	routingChanged: function(routing) {
 		document.addEventListener('things-routing-changed-' + routing, function(event) {
@@ -146,6 +151,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * Route change handler
+	 * *****
 	 */
 	_handlerRouteChange: function(event) {
 		// 1. 페이지 전환시 초기 파라미터 세팅
@@ -160,7 +166,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * 조회 데이터 변경시
-	 *
+	 ******
 	 * @param {Object} lastResponse
 	 */
 	_responseChanged: function(lastResponse) {
@@ -170,6 +176,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * 데이터 조회
+	 * *****
 	 */
 	refreshData: function() {
 		this.getResourceSearchForm().submitMyForm();

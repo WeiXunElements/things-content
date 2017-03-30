@@ -70,6 +70,7 @@ Things.MonitoringBehaviorImpl = {
 
 	/**
 	 * Polling async start
+	 * *****
 	 */
 	startCollectData: function() {
 		// Start Polling
@@ -94,6 +95,7 @@ Things.MonitoringBehaviorImpl = {
 
 	/**
 	 * Polling async clear and stop
+	 * *****
 	 */
 	stopCollectData: function() {
 		// Stop Polling
@@ -121,6 +123,7 @@ Things.MonitoringBehaviorImpl = {
 
 	/**
 	 * Collect Data By Polling
+	 * *****
 	 */
 	collectDataByPolling: function() {
 		this._asyncPolling = this.async(this.collectDataByPolling, this.pollingInterval);
@@ -130,6 +133,7 @@ Things.MonitoringBehaviorImpl = {
 
   /**
    * Route change handler - override
+   * *****
    */
   _handlerRouteChange: function(event) {
     if(event.detail && event.detail.initialParams) {

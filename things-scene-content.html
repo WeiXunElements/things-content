@@ -169,6 +169,7 @@
 
       /**
        * 메뉴 정보 변경시
+       * *****
        */
       viewerMenuInfoChanged: function(menuInfo) {
         document.addEventListener('things-toggle-play-page_' + menuInfo.routing, function(event) {
@@ -181,6 +182,7 @@
 
       /**
        * fullscreen 변경시 event listener
+       * *****
        */
       playPagesToggled: function(power) {
         if(power == 'on') this.startCollectData();
@@ -200,6 +202,7 @@
       /**
        * menuParam이 변화하면
        * pollingInterval, pollingUrl, publishSubject를 초기화
+       * *****
        */
       menuParamsChanged: function(menuParams) {
         var me = this;
@@ -221,6 +224,7 @@
       /**
        * pull 방식의 데이터 조회시 데이터를 조회할 ajax를 호출하는 함수
        * things-monitoring-behavior에 callback 함수로 전달한다.
+       * *****
        */
       pullRequest: function() {
         this.$['polling-ajax'].generateRequest();
@@ -228,6 +232,7 @@
 
       /**
        * polling data responsed
+       * *****
        */
       pollingResponseChanged: function(data) {
         this.messageReceived(data);
@@ -235,6 +240,7 @@
 
       /**
        * 모니터링 데이터를 받음 ...
+       * *****
        */
       messageReceived: function(message) {
         this.monitoringData = message;

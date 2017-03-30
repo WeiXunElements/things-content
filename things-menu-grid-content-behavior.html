@@ -57,6 +57,7 @@ Things.MenuGridContentBehaviorImpl = {
 
 	/**
 	 * Route Changed
+	 ******
 	 */
 	readyToConfig: function(menuInfo) {
 		var resourceGrid = this.getResourceGrid();
@@ -73,6 +74,8 @@ Things.MenuGridContentBehaviorImpl = {
 
 	/**
 	 * Resource Grid를 리턴한다.
+	 *
+	 * *****
 	 */
 	getResourceGrid: function() {
 		return this.$.grid;
@@ -80,6 +83,8 @@ Things.MenuGridContentBehaviorImpl = {
 
 	/**
 	 * Reload Grid. 서치 폼에서 다시 검색한다.
+	 *
+	 *****
 	 */
 	refreshGridData: function(grid) {
 		this.refreshData();
@@ -87,6 +92,7 @@ Things.MenuGridContentBehaviorImpl = {
 
 	/**
 	 * Import Dialog를 오픈한다.
+	 * *****
 	 */
 	openImportDialog: function(event) {
 		event.preventDefault();
