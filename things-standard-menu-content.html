@@ -130,16 +130,22 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 
 			properties: {
 				/**
-				 * resource save url
+				 * 그리드에서 저장을 위한 URL
 				 */
 				resourceSaveUrl: {
 					type: String
 				},
 
+				/**
+				 * 화면 타이틀 
+				 */
 				title: {
 					type: String
 				},
 
+				/**
+				 * 상세 폼 보기 활성화를 위한 설정  
+				 */
 				showDetailForm: {
 					type: Boolean,
 					value: false
@@ -155,16 +161,22 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 				'grid.things-grid-detail-tap': 'detailTapped'
 			},
 
+			/**
+			 * 메뉴 정보가 변경된 이후 
+			 * @param {Object} menuInfo 서버로 부터 조회한 메뉴 정보 
+			 * *****
+			 */
 			_menuConfigChanged: function(menuInfo) {
 				this.resourceSaveUrl = menuInfo.resource_url + '/:id';
 			},
 
 			/**
 			 * 그리드의 detail 버튼 클릭시 detailForm을 보여준다.
+			 * @param {Object} event 상세 버튼 클릭 이벤트  
 			 * *****
 			 */
-			detailTapped: function(data) {
-				this.title = (data.detail.title) ? data.detail.title : (data.detail.name) ? data.detail.name : 'detail';
+			detailTapped: function(event) {
+				this.title = (event.detail.title) ? event.detail.title : (event.detail.name) ? event.detail.name : 'detail';
 				this.showDetailForm = true;
 			},
 

@@ -122,8 +122,8 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * 메뉴 메타데이터 변경시
+	 * @param {Object} menuInfo 메뉴 정보 
    ******
-	 * @param {Object} menuInfo
 	 */
 	_menuInfoChanged: function(menuInfo) {
 		if(menuInfo) {
@@ -141,6 +141,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * Route Changed
+	 * @param {String} routing 라우팅 
 	 * *****
 	 */
 	routingChanged: function(routing) {
@@ -151,6 +152,7 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * Route change handler
+	 * @param {Object} event 라우트 변경 이벤트  
 	 * *****
 	 */
 	_handlerRouteChange: function(event) {
@@ -166,8 +168,8 @@ Things.MenuContentBehaviorImpl = {
 
 	/**
 	 * 조회 데이터 변경시
-	 ******
 	 * @param {Object} lastResponse
+	 ******
 	 */
 	_responseChanged: function(lastResponse) {
 		this.items = (this.itemsProp && lastResponse[this.itemsProp]) ? lastResponse[this.itemsProp] : lastResponse;
@@ -175,7 +177,7 @@ Things.MenuContentBehaviorImpl = {
 	},
 
 	/**
-	 * 데이터 조회
+	 * 데이터 새로 조회 
 	 * *****
 	 */
 	refreshData: function() {

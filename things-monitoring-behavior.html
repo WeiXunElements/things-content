@@ -6,13 +6,13 @@ window.Things = window.Things || {};
 
 /**
  * 모니터링 Behavior
+ * Scene 화면이 데이터를 받는 방법을 정의하면 데이터를 조회 (pull request 방식) 혹은 받아오는 (subscribe 방식) 동작을 정의한다.
  *
  * @polymerBehavior Things.MonitoringBehavior
  */
 Things.MonitoringBehaviorImpl = {
 
 	properties: {
-
 		/**
 		 * Scene Player 타입의 화면의 첫 페이지 routing 정보
 		 * scene player의 monitoring이 종료 되면 첫 페이지로 이동하고
@@ -133,6 +133,7 @@ Things.MonitoringBehaviorImpl = {
 
   /**
    * Route change handler - override
+   * @param {Object} event
    * *****
    */
   _handlerRouteChange: function(event) {

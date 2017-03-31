@@ -9,7 +9,7 @@
 <!--
   Things-point와 연동하여 Scene Content를 화면에 표시.
   Scene 모니터링 (subscribe) 기능 포함
-  메뉴 정보에 Scene 정보를 가져올 수 있도록 resource_url 필드가 설정되어야  함.
+  메뉴 정보에 Scene 정보를 가져올 수 있도록 resource_url 필드가 설정되어야 함.
 -->
 
 <dom-module id="things-scene-player">
@@ -51,7 +51,6 @@
       ],
 
       properties: {
-
         /**
          * Scene Model
          ******/
@@ -118,6 +117,7 @@
 
       /**
        * 메뉴 정보 변경시
+       * @param {Object} menuInfo 메뉴 정보 
        * *****
        */
       viewerMenuInfoChanged: function(menuInfo) {
@@ -133,6 +133,7 @@
 
       /**
        * 전달받은 scene의 routing 정보들을 배열로 초기화
+       * @param {Array} pages Scene Play 기능을 위한 여러 페이지 정보. ','로 구분되어 있음 
        * *****
        */
       _playPagesChanged: function(pages) {
@@ -141,6 +142,7 @@
 
       /**
        * Toggle play pages
+       * @param {String} power Scene Play 기능 활성화 할 지 여부 - on/off
        * *****
        */
       togglePlayPages: function(power) {
@@ -185,6 +187,7 @@
 
       /**
        * Scene 정보 조회 후 모델 설정
+       * @param {Object} data subscribe된 데이터 
        * *****
        */
       responseChanged: function(data) {

@@ -9,14 +9,12 @@
 <!--
   Things-point와 연동하여 Scene Content를 화면에 표시.
   Scene 모니터링 (subscribe) 기능 포함
-  메뉴 정보에 Scene 정보를 가져올 수 있도록 resource_url 필드가 설정되어야  함.
+  메뉴 정보에 Scene 정보를 가져올 수 있도록 resource_url 필드가 설정되어야 함.
 -->
 
 <dom-module id="things-scene-content">
   <template>
     <style>
-
-
       :host {
         display: block;
         @apply(--layout-vertical);
@@ -169,6 +167,7 @@
 
       /**
        * 메뉴 정보 변경시
+       * @param {Object} menuInfo 메뉴 정보
        * *****
        */
       viewerMenuInfoChanged: function(menuInfo) {
@@ -182,6 +181,7 @@
 
       /**
        * fullscreen 변경시 event listener
+       * @param {String} power Scene Play 기능 활성화 할 지 여부 - on/off
        * *****
        */
       playPagesToggled: function(power) {
@@ -191,6 +191,8 @@
 
       /**
        * Scene 정보 조회 후 모델 설정
+       * @param {Object} data subscribe된 데이터 
+       *********
        */
       responseChanged: function(data) {
         if(data) {
@@ -202,6 +204,7 @@
       /**
        * menuParam이 변화하면
        * pollingInterval, pollingUrl, publishSubject를 초기화
+       * @param {Array} menuParams 메뉴 화면에서 설정한 메뉴 파라미터 
        * *****
        */
       menuParamsChanged: function(menuParams) {
@@ -232,6 +235,7 @@
 
       /**
        * polling data responsed
+       * @param {Object} data pull 방식으로 조회한 데이터 
        * *****
        */
       pollingResponseChanged: function(data) {
@@ -239,7 +243,8 @@
       },
 
       /**
-       * 모니터링 데이터를 받음 ...
+       * 모니터링 데이터를 받아 데이터 바인딩 
+       * @param {Object} message subscribe로 받은 데이터 
        * *****
        */
       messageReceived: function(message) {
