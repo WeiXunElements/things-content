@@ -66,14 +66,6 @@
 			last-response="{{metaData}}">
 		</things-ajax>
 
-		<things-ajax 
-			id="detail-ajax" 
-			resource-url="[[menuInfo.resource_url]]" 
-			resource-action="index" 
-			resource-id="{{resourceId}}" 
-			last-response="{{detailItems}}">
-		</things-ajax>
-
 		<things-search-form 
 			id="search-form"
 			form-fields="[[searchFormFields]]" 
@@ -214,6 +206,7 @@
 
 			listeners: {
 				'grid.things-grid-detail-tap': 'resetResource',
+				'grid.things-grid-row-data-select': 'resetResource',
 				'sub-grid.things-grid-handle-save': '_beforeDetailsSave'
 			},
 
