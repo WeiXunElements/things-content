@@ -3,37 +3,28 @@
 #### 화면 표시에 대한 정보 컴포넌트
 
 
-## 2. 개발
-### 2.1 Polymer-CLI 설치
+## Dependencies
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
+Element dependencies are managed via [Bower](http://bower.io/). You can
+install that via:
 
-### 2.2 Application 수행
+    npm install -g bower
 
-```
-$ polymer serve
-```
+Then, go ahead and download the element's dependencies:
 
-### 2.3 Application 빌드
+    bower install
 
-```
-$ polymer build
-```
+## Playing With Your Element
 
-아래 명령어로 ` build/bundled`나 ` build/unbundled`에서 서버를 띄울수 있다.
+If you wish to work on your element in isolation, we recommend that you use
+[Polyserve](https://github.com/PolymerLabs/polyserve) to keep your element's
+bower dependencies in line. You can install it via:
 
-```
-$ polymer serve build/bundled
-```
+    npm install -g polymer-cli
 
-### 2.3 Running Tests
+And you can run it via:
 
-```
-$ polymer test
-```
+    polymer serve
 
-테스트는 [web-component-tester](https://github.com/Polymer/web-component-tester)에서 설명한데로 설정완료됨.
-아래 명령어로 테스트를 수행할 수 있다.
-```
-$ polymer test
-```
+Once running, you can preview your element at
+`http://localhost:8080/components/things-content/`, where `things-content` is the name of the directory containing it.
