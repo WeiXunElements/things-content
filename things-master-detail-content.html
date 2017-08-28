@@ -62,7 +62,7 @@ Copyright © HatioLab Inc. All rights reserved.
 		}
 		</style>
 
-		<things-ajax 
+		<things-ajax
 			auto
 			id="resource-meta"
 			method="GET"
@@ -70,12 +70,12 @@ Copyright © HatioLab Inc. All rights reserved.
 			last-response="{{metaData}}">
 		</things-ajax>
 
-		<things-search-form 
+		<things-search-form
 			id="search-form"
-			form-fields="[[searchFormFields]]" 
+			form-fields="[[searchFormFields]]"
 			select-fields="[[masterSelectFields]]"
 			sort-fields="[[sortFields]]"
-			action-url="[[menuInfo.resource_url]]" 
+			action-url="[[menuInfo.resource_url]]"
 			page="{{page}}"
 			limit="[[limit]]"
 			last-response="{{lastResponse}}">
@@ -83,11 +83,11 @@ Copyright © HatioLab Inc. All rights reserved.
 
 		<span class="subtitle">[[menuInfo.title]]</span>
 
-		<things-resource-grid 
+		<things-resource-grid
 			id="grid"
 			class="things-resource-grid-main"
 			grid-height="[[gridHeight]]"
-			model="[[gridModel]]" 
+			model="[[gridModel]]"
 			columns="[[gridColumns]]"
 			config="[[gridConfig]]"
 			buttons="[[buttons]]"
@@ -104,8 +104,8 @@ Copyright © HatioLab Inc. All rights reserved.
 		<span class="subtitle">[[detailTitle]]</span>
 
 		<things-menu-detail-grid
-			id="sub-grid" 
-			class="things-resource-grid-sub" 
+			id="sub-grid"
+			class="things-resource-grid-sub"
 			grid-config="[[gridConfig]]"
 			grid-model="[[detailGridModel]]"
 			grid-columns="[[detailGridColumns]]"
@@ -144,7 +144,7 @@ Copyright © HatioLab Inc. All rights reserved.
 				},
 
 				/**
-				 * 마스터 데이터를 마스터 그리드에 표시할 select 필드 
+				 * 마스터 데이터를 마스터 그리드에 표시할 select 필드
 				 */
 				masterSelectFields: {
 					type: String
@@ -159,49 +159,49 @@ Copyright © HatioLab Inc. All rights reserved.
 				},
 
 				/**
-				 * 상세 그리드 모델 
+				 * 상세 그리드 모델
 				 */
 				detailGridModel: {
 					type: Object
 				},
 
 				/**
-				 * 상세 그리드 컬럼  
+				 * 상세 그리드 컬럼
 				 */
 				detailGridColumns: {
 					type: Array
 				},
 
 				/**
-				 * 상세 조회 URL  
+				 * 상세 조회 URL
 				 */
 				detailSearchUrl: {
 					type: String
 				},
 
 				/**
-				 * 상세 저장 URL  
+				 * 상세 저장 URL
 				 */
 				detailSaveUrl: {
 					type: String
 				},
 
 				/**
-				 * 상세 그리드의 바인딩 데이터   
+				 * 상세 그리드의 바인딩 데이터
 				 */
 				detailItems: {
 					type: Array
 				},
 
 				/**
-				 * 상세 그리드 데이터가 참조할 마스터 필드명 
+				 * 상세 그리드 데이터가 참조할 마스터 필드명
 				 */
 				masterField: {
 					type: String
 				},
 
 				/**
-				 * 상세 그리드 제목 
+				 * 상세 그리드 제목
 				 */
 				detailTitle: {
 					type: String
@@ -219,8 +219,8 @@ Copyright © HatioLab Inc. All rights reserved.
 			],
 
 			/**
- 			 * 마스터 그리드 컬럼이 변경된 이후 
- 			 * @param {Object} gridColumns 그리드 컬럼  
+ 			 * 마스터 그리드 컬럼이 변경된 이후
+ 			 * @param {Object} gridColumns 그리드 컬럼
  			 *********
 			 */
 			_gridColumnsChanged: function(gridColumns) {
@@ -228,7 +228,7 @@ Copyright © HatioLab Inc. All rights reserved.
 
 				gridColumns.forEach(function(metaData) {
 					if(!metaData.virtual_field || metaData.virtual_field == false) {
-						selectColumns += metaData.name + ',';  
+						selectColumns += metaData.name + ',';
 					}
 				});
 
@@ -254,9 +254,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			},
 
 			/**
-			 * menuId로 부터 메뉴 상세 메타 데이터 조회를 위한 URL을 생성 
+			 * menuId로 부터 메뉴 상세 메타 데이터 조회를 위한 URL을 생성
 			 * *******
-			 * @param {String} menuId 메뉴 아이디 
+			 * @param {String} menuId 메뉴 아이디
 			 * @return {String} 메뉴 상세 메타 데이터 조회를 위한 URL
 			 */
 			_computeMenuDetailMetaUrl: function(menuId) {
@@ -290,7 +290,7 @@ Copyright © HatioLab Inc. All rights reserved.
 						if(buttons && buttons.length > 0) {
 							buttons.forEach(function(button) { button.id = button.name + '-btn'; });
 						}
-						
+
 						this.detailButtons = buttons;
 					}
 
@@ -307,9 +307,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			},
 
 			/**
-			 * 상세 그리드 데이터 저장 전 처리 ... 
+			 * 상세 그리드 데이터 저장 전 처리 ...
 			 * *******
-			 * @param {Object} event 
+			 * @param {Object} event
 			 */
 			_beforeDetailsSave: function(event) {
 				var detailGrid = event.target;
@@ -328,9 +328,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			},
 
 			/**
-			 * 마스터 데이터 조회 
+			 * 마스터 데이터 조회
 			 * *******
-			 * @param {Object} event 
+			 * @param {Object} event
 			 */
 			refreshMaster: function(event) {
 				this.$['search-form'].submitMyForm();
@@ -339,11 +339,11 @@ Copyright © HatioLab Inc. All rights reserved.
 			/**
 			 * 그리드 Detail 버튼 선택 시 ...
 			 * *******
-			 * @param {Object} event 그리드 Detail 버튼 선택 이벤트 
+			 * @param {Object} event 그리드 Detail 버튼 선택 이벤트
 			 */
 			resetResource: function(event) {
 				this.resource = event.detail;
-				this.resourceId = this.resource.id;
+				this.resourceId = this.menuInfo.id_field ? this.resource[this.menuInfo.id_field] : this.resource.id;
 			}
 		});
 	</script>

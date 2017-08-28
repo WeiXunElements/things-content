@@ -39,7 +39,7 @@ Things.DetailPopupBehaviorImpl = {
 	 * @param {Event} event 그리드에서 선택된 event
 	 */
 	showDetailView: function(event) {
-		if(event.defaultPrevented || !event || !event.detail || !event.detail.id) return;
+		if(event.defaultPrevented || !event || !event.detail || (!event.detail[this.menuInfo.id_field] && !event.detail.id)) return;
 
 		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
 			this.showResourceForm(event.detail, this.refreshGridData.bind(this));
@@ -83,7 +83,8 @@ Things.DetailPopupBehaviorImpl = {
 		viewElement.propExtensible = true;
 		viewElement.saveCallback = saveCallback;
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		viewElement.showDetailView(selectedRecord.id, selectedRecord, null, saveCallback);
+		var idValue = this.menuInfo.id_field ? selectedRecord[this.menuInfo.id_field] : selectedRecord.id;
+		viewElement.showDetailView(idValue, selectedRecord, null, saveCallback);
 	},
 
 	/**
@@ -97,27 +98,29 @@ Things.DetailPopupBehaviorImpl = {
 	_setViewConfig: function(elementId, viewElement, selectedRecord, saveCallback) {
 		viewElement.id = elementId;
 
-		var title = '';
 		if(selectedRecord && selectedRecord.name && selectedRecord.description) {
-			title = selectedRecord.name + ' ( ' + selectedRecord.description +' )';
-		} else if (selectedRecord && selectedRecord.name) {
-			title = selectedRecord.name;
+			viewElement.title = selectedRecord.name + ' ( ' + selectedRecord.description +' )';
+		} else if (selectedRecord && selectedRecord[this.menuInfo.title_field]) {
+			viewElement.title = selectedRecord[this.menuInfo.title_field];
 		} else {
-			title = this.menuInfo.title;
+			viewElement.title = this.menuInfo.title ? this.menuInfo.title : '';
 		}
 
-		viewElement.title = title;
+		var idField = this.menuInfo.id_field;
+		viewElement.idField = idField;
 		viewElement.formFields = this.resourceFormFields;
 		viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
 		viewElement.resourceType = this.menuInfo.resource_name;
-		viewElement.resourceId = selectedRecord ? selectedRecord.id : null;
+		var resourceId = selectedRecord ? (selectedRecord[idField] ? selectedRecord[idField] : selectedRecord.id) : null;
+		viewElement.resourceId = resourceId;
 		var eventName = 'things-resource-form-saved';
 
-		if(selectedRecord && selectedRecord.id) {
+		if(resourceId) {
 			viewElement.resourceUrl = this.menuInfo.resource_url + '/:id';
+
 		} else {
 			eventName = 'things-resource-form-created';
-			selectedRecord ? viewElement.resource = selectedRecord : '';
+			if(selectedRecord) viewElement.resource = selectedRecord;
 			viewElement.resourceUrl = this.menuInfo.resource_url;
 		}
 
