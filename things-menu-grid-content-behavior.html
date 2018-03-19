@@ -69,11 +69,18 @@ Things.MenuGridContentBehaviorImpl = {
 		if(resourceGrid) {
 			resourceGrid.enableDetailColumn = menuInfo.detail_form_id ? true : false;
 			resourceGrid.paginatable = menuInfo.pagination;
+		}
+
+		// 현재 DOM 안에 있는 모든 things-resource-grid에 routing 변경시 resizeGrid를 호출 하도록
+		var resourceGrids = this.getResourceGrids();
+		if(resourceGrids.length > 0) {
 			var eventName = 'things-routing-changed-' + menuInfo.routing;
 
-			document.addEventListener(eventName, function(event) {
-				if(resourceGrid.resizeGrid) resourceGrid.resizeGrid();
-			}.bind(this));
+			resourceGrids.forEach(resourceGrid => {
+				document.addEventListener(eventName, event => {
+					if(resourceGrid.resizeGrid) resourceGrid.resizeGrid();
+				})
+			})
 		}
 	},
 
@@ -83,6 +90,13 @@ Things.MenuGridContentBehaviorImpl = {
 	 */
 	getResourceGrid: function() {
 		return this.$.grid;
+	},
+
+	/**
+	 * 현재 DOM 안의 모든 things-resource-grid를 리턴
+	 */
+	getResourceGrids: function() {
+		return this.querySelectorAll('things-resource-grid');
 	},
 
 	/**
