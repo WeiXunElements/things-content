@@ -102,7 +102,7 @@ Things.MenuContentBehaviorImpl = {
 	 */
 	_initialSearchParamsChanged: function(initialSearchParams) {
 		var searchForm = this.getResourceSearchForm();
-		if(searchForm) {
+		if(searchForm && searchForm.isFormConfigured()) {
 			searchForm.setFormData(initialSearchParams);
 			searchForm.submitMyForm();
 		}
@@ -194,7 +194,11 @@ Things.MenuContentBehaviorImpl = {
 	 */
 	refreshData: function() {
 		if(this.initialSearchFlag) {
-			this.getResourceSearchForm().submitMyForm();
+			var searchForm = this.getResourceSearchForm();
+			if(this.initialSearchParams) {
+				searchForm.setFormData(this.initialSearchParams);
+			}
+			searchForm.submitMyForm();
 		} else {
 			this.initialSearchFlag = true;
 		}
