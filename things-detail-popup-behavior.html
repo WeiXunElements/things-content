@@ -32,11 +32,45 @@ Things.DetailPopupBehaviorImpl = {
 			this.listen(grid, 'things-grid-detail-tap', 'showDetailView');
 		}
 	},
-
+	/**
+	 * Detail 화면에 띄울 Element Object는 구성이 완료 되었으나 아직 dialog호출하지 않았을 때 fire되는 이벤트
+	 * ****
+	 * @event things-detail-view-configure-finished 
+	 * @type {Object} detail
+	 * @property {Object} view - detail 화면에 표현될 Element Object
+	 * @property {Boolean} modal - 모달로 띄울 것인지
+	 * @property {Object} selectedRecord - 선택된 데이터
+	 * @property {Function} saveCallback - 저장할때 호출되는 콜백 함수
+	 */
+	
+	/**
+	 * 상세화면의 설정이 things-resource-detail일 경우 dialog를 open하는 용도의 event
+	 * ****
+	 * @event things-open-menu-detail-view
+	 * @type {Object} detail
+	 * @property {Object} menuInfo - 소스화면의 메뉴정보
+	 * @property {Object} resource - 선택된 데이터
+	 * @property {Object} resourceFormFields - 폼에 등록될 수 있는 필드 설정 정보
+	 * @property {Function} closeCallback - dialog가 꺼질때 호출되는 콜백 함수
+	 */
+	
+	/**
+	 * Detail 화면에 띄울 Element Object는 구성이 완료 되어 dialog를 띄우기 위한 Event
+	 * ****
+	 * @event things-open-popup-view
+	 * @type {Object} detail
+	 * @property {Object} view - detail 화면에 표현될 Element Object
+	 * @property {Boolean} modal - 모달로 띄울 것인지
+	 * @property {Object} selectedRecord - 선택된 데이터
+	 * @property {Function} saveCallback - 저장할때 호출되는 콜백 함수
+	 */
+	
 	/**
 	 * 디테일 뷰를 표시한다.
 	 *****
 	 * @param {Event} event 그리드에서 선택된 event
+	 * @fires this#things-open-menu-detail-view
+	 * @listens grid#things-grid-detail-tap
 	 */
 	showDetailView: function(event) {
 		if(event.defaultPrevented || !event || !event.detail || (!event.detail[this.menuInfo.id_field] && !event.detail.id)) return;
@@ -61,6 +95,8 @@ Things.DetailPopupBehaviorImpl = {
 	 *****
 	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
 	 * @param {Function} saveCallback 저장 후 콜백 함수
+	 * @fires this#things-detail-view-configure-finished
+	 * @fires document#things-open-popup-view
 	 */
 	showResourceForm: function(selectedRecord, saveCallback) {
 		var viewElement = document.createElement('things-resource-form');
@@ -72,13 +108,14 @@ Things.DetailPopupBehaviorImpl = {
 			document.dispatchEvent(event);
         }
 	},
-
+			
 	/**
 	 * 프레임 웍에서 기본으로 제공하지 않는 리소스 디테일 폼을 표시한다.
 	 *****
 	 * @param {String} detailViewId 상세 뷰 아이디
 	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
 	 * @param {Function} saveCallback 저장 후 콜백 함수
+	 * @fires this#things-detail-view-configure-finished
 	 */
 	showCustomView: function(detailViewId, selectedRecord, saveCallback) {
 		var viewElement = document.createElement(detailViewId);
@@ -102,6 +139,8 @@ Things.DetailPopupBehaviorImpl = {
 	 * @param {Object} viewElement
 	 * @param {Object} selectedRecord
 	 * @param {Function} saveCallback 저장 후 콜백 함수
+	 * @listens viewElement#things-resource-form-saved
+	 * @listens viewElement#things-resource-form-created
 	 */
 	_setViewConfig: function(elementId, viewElement, selectedRecord, saveCallback) {
 		viewElement.id = elementId;

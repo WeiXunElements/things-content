@@ -31,7 +31,12 @@ Things.ApprSubmitPopupBehaviorImpl = {
 			this.listen(grid, 'things-grid-handle-request-release', 'configureDetailForm');
 		}
 	},
-
+	/**
+	* detail form구성
+	****
+	* @param {Object} event - 그리드에서 선택 후 승인요청을 클릭할 경우 발생되는 Event
+	* @listens grid#things-grid-handle-request-release
+	*/
 	configureDetailForm: function(event){
 		var selectedRecord = event.detail.row;
 		if(selectedRecord){
@@ -67,9 +72,10 @@ Things.ApprSubmitPopupBehaviorImpl = {
 	},
 
 	/**
-	 * 승인 요청 폼 화면에 표시
-	 * @param {Event} event 그리드에서 선택된 event
+	 * 상세화면의 설정이 things-resource-detail일 경우 승인 요청 폼을 화면에 표시하는 로직
 	 *********
+	 * @param {Event} event - detail popup behavior에서 발생되는 `things-detail-view-configure-finished` Event
+	 * @listens viewElement#things-detail-view-configure-finished
 	 */
 	showRequestReleaseForm: function(event) {
 		if(event.detail && event.detail.selectedRecord && event.detail.selectedRecord.__buttonType=='request-release'){
@@ -83,9 +89,14 @@ Things.ApprSubmitPopupBehaviorImpl = {
 		this.unlisten(this, 'things-detail-view-configure-finished', 'showRequestReleaseForm');
 	},
 	/**
-	* Initialize detail screen
+	* 상세화면의 설정이 things-resource-detail일 경우 상세화면 구성
 	****
-	* @param {Object} event
+	* @param {Object} menuInfo - 메인화면에서의 화면 메뉴정보
+	* @param {Object} resource - 선택된 그리드나 데이터의 Object
+	* @param {Object} openCallback - Dialog를 열때 호출되는 Callback 함수
+	* @param {Object} closeCallback - Dialog를 닫을때 호출되는 Callback 함수
+	* @param {Object} resourceFormFields - 리소스 폼사용시 적용되는 필드 명들
+	* @listens viewElement#things-request-release-detail-view-added
 	*/
 	initOpener: function(menuInfo, resource, openCallback, closeCallback, resourceFormFields) {
 		var viewElement = document.createElement('things-base-works-request-release-form');
@@ -104,6 +115,9 @@ Things.ApprSubmitPopupBehaviorImpl = {
 		}
 		viewElement.addEventListener('things-request-release-detail-view-added',viewAddHandle)
 	},
+	/**
+	 * Life Cycle - detached
+	 */
 	detached: function(){
 		var grid = this.$['grid'];
 		if(grid) {
