@@ -65,9 +65,12 @@ Things.DetailPopupBehaviorImpl = {
 	showResourceForm: function(selectedRecord, saveCallback) {
 		var viewElement = document.createElement('things-resource-form');
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		var eventDetail = { view: viewElement, modal: true, closeCallback: saveCallback };
-		var event = new CustomEvent('things-open-popup-view', { 'detail': eventDetail });
-		document.dispatchEvent(event);
+		var eventDetail = { 'view': viewElement, 'modal': true, 'selectedRecord':selectedRecord,'saveCallback': saveCallback };
+		var evt = this.fire('things-detail-view-configure-finished', eventDetail, { cancelable: true });
+        if (!evt.defaultPrevented) {
+			var event = new CustomEvent('things-open-popup-view', { detail: eventDetail });
+			document.dispatchEvent(event);
+        }
 	},
 
 	/**
@@ -83,8 +86,13 @@ Things.DetailPopupBehaviorImpl = {
 		viewElement.propExtensible = true;
 		viewElement.saveCallback = saveCallback;
 		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		var idValue = this.menuInfo.id_field ? selectedRecord[this.menuInfo.id_field] : selectedRecord.id;
-		viewElement.showDetailView(idValue, selectedRecord, null, saveCallback);
+		var eventDetail = { 'view': viewElement, 'modal': true, 'selectedRecord':selectedRecord,'saveCallback': saveCallback };
+		var evt = this.fire('things-detail-view-configure-finished', eventDetail, { cancelable: true });
+
+		if (!evt.defaultPrevented) {
+			var idValue = this.menuInfo.id_field ? selectedRecord[this.menuInfo.id_field] : selectedRecord.id;
+			viewElement.showDetailView(idValue, selectedRecord, null, saveCallback);
+		}
 	},
 
 	/**
@@ -113,14 +121,14 @@ Things.DetailPopupBehaviorImpl = {
 		viewElement.resourceType = this.menuInfo.resource_name;
 		var resourceId = selectedRecord ? (selectedRecord[idField] ? selectedRecord[idField] : selectedRecord.id) : null;
 		viewElement.resourceId = resourceId;
-		var eventName = 'things-resource-form-saved';
+		if(selectedRecord) viewElement.resource = selectedRecord;
 
+		var eventName = 'things-resource-form-saved';
 		if(resourceId) {
 			viewElement.resourceUrl = this.menuInfo.resource_url + '/:id';
 
 		} else {
 			eventName = 'things-resource-form-created';
-			if(selectedRecord) viewElement.resource = selectedRecord;
 			viewElement.resourceUrl = this.menuInfo.resource_url;
 		}
 
