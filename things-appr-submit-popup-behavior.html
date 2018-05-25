@@ -82,6 +82,8 @@ Things.ApprSubmitPopupBehaviorImpl = {
 			event.preventDefault();
 			var viewElement = document.createElement('things-base-works-request-release-form');
 			viewElement.detailView = event.detail.view;
+			viewElement.detailView.menuInfo = this.menuInfo; 
+			viewElement.detailView.resource = event.detail.selectedRecord;
 			viewElement.addDetailView(viewElement.detailView);
 			viewElement.title = Things.DataGlobal.t('label.appr_doc');
 			this.openPopupView(viewElement, true);
@@ -99,8 +101,7 @@ Things.ApprSubmitPopupBehaviorImpl = {
 	* @listens viewElement#things-request-release-detail-view-added
 	*/
 	initOpener: function(menuInfo, resource, openCallback, closeCallback, resourceFormFields) {
-		var viewElement = document.createElement('things-base-works-request-release-form');
-		viewElement.menuInfo = null;      
+		var viewElement = document.createElement('things-base-works-request-release-form');    
 		viewElement.menuInfo = menuInfo; 
 		viewElement.resource = resource;
 		viewElement.resourceFormFields = resourceFormFields;
