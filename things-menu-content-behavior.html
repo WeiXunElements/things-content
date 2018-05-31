@@ -143,6 +143,7 @@ Things.MenuContentBehaviorImpl = {
 			this.routingChanged(menuInfo.routing);
 			this.itemsProp = menuInfo.items_prop;
 			this.totalProp = menuInfo.total_prop;
+			this.autoFilter = (menuInfo.menu_type == 'FILTERED_SCREEN');
 			var searchForm = this.getResourceSearchForm();
 
 			if(searchForm) {
