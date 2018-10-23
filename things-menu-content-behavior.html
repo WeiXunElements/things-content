@@ -196,10 +196,18 @@ Things.MenuContentBehaviorImpl = {
 	refreshData: function() {
 		if(this.initialSearchFlag) {
 			var searchForm = this.getResourceSearchForm();
-			if(this.initialSearchParams) {
-				searchForm.setFormData(this.initialSearchParams);
+
+			if (searchForm.legacyData) {
+				// 恢复改变界面大小前的数据
+				searchForm.setFormData(searchForm.legacyData);
+
+				searchForm.legacyData = null;
+			} else {
+				if (this.initialSearchParams) {
+					searchForm.setFormData(this.initialSearchParams);
+				}
+				searchForm.submitMyForm();
 			}
-			searchForm.submitMyForm();
 		} else {
 			this.initialSearchFlag = true;
 		}
