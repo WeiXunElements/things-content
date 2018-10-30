@@ -94,11 +94,24 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 		Polymer({
 			is: 'things-resource-menu-content',
 
+			properties: {
+				initialSearchFlag: Boolean
+			},
+
+			observers: [
+				'initialSearchFlagChanged(menuInfo.initial_search)'
+			],
+
 			behaviors: [
 				Things.MenuGridContentBehavior,
 				Things.DetailPopupBehavior,
 				Things.ApprSubmitPopupBehavior
-			]
+			],
+
+			initialSearchFlagChanged: function(initialSearchFlag) {
+				// 2018.10.30 - 添加默认刷新数据的开关
+				this.initialSearchFlag = !initialSearchFlag;
+			}
 		});
 	</script>
 </dom-module>
