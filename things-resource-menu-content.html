@@ -56,7 +56,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			id="resource-meta"
 			method="GET"
 			resource-url="[[menuMetaUrl]]"
-			last-response="{{metaData}}">
+			on-things-ajax-response="onAjaxResponse">
 		</things-ajax>
 
 		<things-search-form 
@@ -95,12 +95,11 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			is: 'things-resource-menu-content',
 
 			properties: {
-				initialSearchFlag: Boolean
+				initialSearchFlag: {
+					type: Boolean,
+					value: true
+				}
 			},
-
-			observers: [
-				'initialSearchFlagChanged(menuInfo.initial_search)'
-			],
 
 			behaviors: [
 				Things.MenuGridContentBehavior,
@@ -108,9 +107,16 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				Things.ApprSubmitPopupBehavior
 			],
 
-			initialSearchFlagChanged: function(initialSearchFlag) {
-				// 2018.10.30 - 添加默认刷新数据的开关
-				this.initialSearchFlag = !initialSearchFlag;
+			onAjaxResponse: function(event) {
+				const menuParams = event.detail.menu_params;
+				if (menuParams && menuParams.length > 0) {
+					const initSearchParam = menuParams.find(item => item.name === 'init_search');
+					if (initSearchParam) {
+						this.initialSearchFlag = initSearchParam['value'] == 'true';
+					}
+				}
+
+				this.metaData = event.detail;
 			}
 		});
 	</script>
