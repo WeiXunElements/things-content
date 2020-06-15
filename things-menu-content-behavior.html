@@ -194,7 +194,7 @@ Things.MenuContentBehaviorImpl = {
 	 * *****
 	 */
 	refreshData: function() {
-		if(this.initialSearchFlag) {
+		if (this.initialSearchFlag) {
 			var searchForm = this.getResourceSearchForm();
 
 			if (searchForm.legacyData) {
@@ -208,8 +208,6 @@ Things.MenuContentBehaviorImpl = {
 				}
 				searchForm.submitMyForm();
 			}
-		} else {
-			this.initialSearchFlag = true;
 		}
 	}
 };
