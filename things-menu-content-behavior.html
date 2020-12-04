@@ -195,6 +195,9 @@ Things.MenuContentBehaviorImpl = {
 	 */
 	refreshData: function() {
 		const searchForm = this.getResourceSearchForm();
+		if (!searchForm)
+			return;
+
 		if (this.initialSearchFlag) {
 			if (!searchForm.legacyData || JSON.stringify(searchForm.legacyData) === '{}') {
 				if (this.initialSearchParams)
@@ -203,7 +206,7 @@ Things.MenuContentBehaviorImpl = {
 			}
 		}
 
-		if (JSON.stringify(searchForm.legacyData) !== {}) {
+		if (searchForm.legacyData && JSON.stringify(searchForm.legacyData) !== '{}') {
 			searchForm.setFormData(searchForm.legacyData);
 			searchForm.legacyData = null;
 		}
