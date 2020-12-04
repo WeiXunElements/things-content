@@ -194,20 +194,18 @@ Things.MenuContentBehaviorImpl = {
 	 * *****
 	 */
 	refreshData: function() {
+		const searchForm = this.getResourceSearchForm();
 		if (this.initialSearchFlag) {
-			var searchForm = this.getResourceSearchForm();
-
-			if (searchForm.legacyData) {
-				// 恢复改变界面大小前的数据
-				searchForm.setFormData(searchForm.legacyData);
-
-				searchForm.legacyData = null;
-			} else {
-				if (this.initialSearchParams) {
+			if (!searchForm.legacyData || JSON.stringify(searchForm.legacyData) === '{}') {
+				if (this.initialSearchParams)
 					searchForm.setFormData(this.initialSearchParams);
-				}
 				searchForm.submitMyForm();
 			}
+		}
+
+		if (JSON.stringify(searchForm.legacyData) !== {}) {
+			searchForm.setFormData(searchForm.legacyData);
+			searchForm.legacyData = null;
 		}
 	}
 };
