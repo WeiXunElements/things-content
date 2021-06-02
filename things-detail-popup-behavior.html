@@ -73,6 +73,7 @@ Things.DetailPopupBehaviorImpl = {
 	 * @listens grid#things-grid-detail-tap
 	 */
 	showDetailView: function(event) {
+		if (!this.menuInfo) return;
 		if(event.defaultPrevented || !event || !event.detail || (!event.detail[this.menuInfo.id_field] && !event.detail.id)) return;
 
 		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
