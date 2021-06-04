@@ -1,14 +1,14 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../things-ws/things-ws-subscriber.html">
-<link rel="import" href="../things-scene-viewer/things-scene-viewer.html">
-<link rel="import" href="./things-menu-content-behavior.html">
-<link rel="import" href="./things-monitoring-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../things-ws/things-ws-subscriber.html" />
+<link rel="import" href="../things-scene-viewer/things-scene-viewer.html" />
+<link rel="import" href="./things-menu-content-behavior.html" />
+<link rel="import" href="./things-monitoring-behavior.html" />
 
 <!--
   Things-point와 연동하여 Scene Content를 화면에 표시.
@@ -21,55 +21,46 @@ Copyright © HatioLab Inc. All rights reserved.
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply (--layout-vertical);
+        @apply (--layout-flex);
       }
 
       things-scene-viewer {
-        @apply(--layout-flex)
+        @apply (--layout-flex);
       }
     </style>
 
-    <things-ws-subscriber id="subscriber"
-                          !auto
-                          url-key="wsUrl"
-                          subject="[[publishSubject]]">
-    </things-ws-subscriber>
+    <things-ws-subscriber id="subscriber" !auto url-key="wsUrl" subject="[[publishSubject]]"> </things-ws-subscriber>
 
-    <things-ajax  auto
-                  id="get-menu-params"
-                  resource-url="menus/:id/menu_params"
-                  resource-id="[[menuInfo.id]]"
-                  last-response="{{menuParams}}">
+    <things-ajax
+      auto
+      id="get-menu-params"
+      resource-url="menus/:id/menu_params"
+      resource-id="[[menuInfo.id]]"
+      last-response="{{menuParams}}"
+    >
     </things-ajax>
 
-    <things-ajax  auto
-                  id="get-scene"
-                  resource-url="[[menuInfo.resource_url]]"
-                  last-response="{{response}}">
+    <things-ajax auto id="get-scene" resource-url="[[menuInfo.resource_url]]" last-response="{{response}}">
     </things-ajax>
 
-    <things-ajax  id="polling-ajax"
-                  resource-url="[[pullUrl]]"
-                  last-response="{{pollingResponse}}">
-    </things-ajax>
+    <things-ajax id="polling-ajax" resource-url="[[pullUrl]]" last-response="{{pollingResponse}}"> </things-ajax>
 
-    <things-scene-viewer model="[[model]]"
-                         values="[[monitoringData]]"
-                         mode="1"
-                         fit="both"
-                         base-url="[[globals.baseUrl]]">
+    <things-scene-viewer
+      model="[[model]]"
+      values="[[monitoringData]]"
+      mode="1"
+      fit="both"
+      base-url="[[globals.baseUrl]]"
+    >
     </things-scene-viewer>
   </template>
 
   <script>
     Polymer({
-      is: 'things-scene-content',
+      is: "things-scene-content",
 
-      behaviors: [
-        Things.MenuContentBehavior,
-        Things.MonitoringBehavior
-      ],
+      behaviors: [Things.MenuContentBehavior, Things.MonitoringBehavior],
 
       properties: {
         /**
@@ -77,14 +68,14 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         menuParams: {
           type: Array,
-          observer: 'menuParamsChanged'
+          observer: "menuParamsChanged",
         },
 
         /**
          * Scene Model
          ******/
         model: {
-          type: Object
+          type: Object,
         },
 
         /**
@@ -92,7 +83,7 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         response: {
           type: Object,
-          observer: 'responseChanged'
+          observer: "responseChanged",
         },
 
         /**
@@ -100,14 +91,14 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         pollingInterval: {
           type: String,
-          value: 10
+          value: 10,
         },
 
         /**
          * pull target url
          ******/
         pullUrl: {
-          type: String
+          type: String,
         },
 
         /**
@@ -115,21 +106,21 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         pollingResponse: {
           type: Array,
-          observer: 'pollingResponseChanged'
+          observer: "pollingResponseChanged",
         },
 
         /**
          * async Polling
          ******/
         _asyncPolling: {
-          type: Object
+          type: Object,
         },
 
         /**
          * publish subject
          ******/
         publishSubject: {
-          type: String
+          type: String,
         },
 
         /**
@@ -140,20 +131,18 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         collectDataMode: {
           type: String,
-          value: 'pull'
+          value: "pull",
         },
 
         /**
          * 모니터링 데이터
          ******/
         monitoringData: {
-          type: Object
-        }
+          type: Object,
+        },
       },
 
-      observers: [
-        'viewerMenuInfoChanged(menuInfo)'
-      ],
+      observers: ["viewerMenuInfoChanged(menuInfo)"],
 
       /**
        * things-monitoring-behavior에 필요한 인자들을 초기화
@@ -163,9 +152,9 @@ Copyright © HatioLab Inc. All rights reserved.
        * subscriberId: subscribe 모드로 데이터를 조회할 때 구현한 things-ws-subscriber의 id를 전달한다.
        * subscriberCallback: subscribe모드를 통해 데이터를 전달 받을때 데이터 핸들링을 위한 callbaack
        ******/
-      ready: function() {
+      ready: function () {
         this.pullRequestCallback = this.pullRequest;
-        this.subscriberId = 'subscriber';
+        this.subscriberId = "subscriber";
         this.subscriberCallback = this.messageReceived;
       },
 
@@ -174,11 +163,14 @@ Copyright © HatioLab Inc. All rights reserved.
        * @param {Object} menuInfo 메뉴 정보
        * *****
        */
-      viewerMenuInfoChanged: function(menuInfo) {
-        document.addEventListener('things-toggle-play-page_' + menuInfo.routing, function(event) {
-          var power = event.detail;
-          this.playPagesToggled(power);
-        }.bind(this));
+      viewerMenuInfoChanged: function (menuInfo) {
+        document.addEventListener(
+          "things-toggle-play-page_" + menuInfo.routing,
+          function (event) {
+            var power = event.detail;
+            this.playPagesToggled(power);
+          }.bind(this)
+        );
 
         this.viewerUrl = menuInfo.resource_url;
       },
@@ -188,39 +180,39 @@ Copyright © HatioLab Inc. All rights reserved.
        * @param {String} power Scene Play 기능 활성화 할 지 여부 - on/off
        * *****
        */
-      playPagesToggled: function(power) {
-        if(power == 'on') this.startCollectData();
-        if(power == 'off') this.stopCollectData();
+      playPagesToggled: function (power) {
+        if (power == "on") this.startCollectData();
+        if (power == "off") this.stopCollectData();
       },
 
       /**
        * Scene 정보 조회 후 모델 설정
-       * @param {Object} data subscribe된 데이터 
+       * @param {Object} data subscribe된 데이터
        *********
        */
-      responseChanged: function(data) {
-        if(data) {
+      responseChanged: function (data) {
+        if (data) {
           this.model = JSON.parse(data.model);
-          this.publishSubject = '/elidom/stomp/topic/hatiolab-hq/smart/' + data.name;
+          this.publishSubject = "/elidom/stomp/topic/hatiolab-hq/smart/" + data.name;
         }
       },
 
       /**
        * menuParam이 변화하면
        * pollingInterval, pollingUrl, publishSubject를 초기화
-       * @param {Array} menuParams 메뉴 화면에서 설정한 메뉴 파라미터 
+       * @param {Array} menuParams 메뉴 화면에서 설정한 메뉴 파라미터
        * *****
        */
-      menuParamsChanged: function(menuParams) {
+      menuParamsChanged: function (menuParams) {
         var me = this;
-        menuParams.forEach(function(item) {
-          if(item.name == 'polling-interval') {
+        menuParams.forEach(function (item) {
+          if (item.name == "polling-interval") {
             me.pollingInterval = item.value;
-          } else if (item.name == 'subscribe-subject') {
+          } else if (item.name == "subscribe-subject") {
             me.subscribeSubject = item.value;
-          } else if (item.name == 'collect-data-mode') {
+          } else if (item.name == "collect-data-mode") {
             me.collectDataMode = item.value;
-          } else if (item.name == 'pull-url') {
+          } else if (item.name == "pull-url") {
             me.pullUrl = item.value;
           }
         });
@@ -233,27 +225,27 @@ Copyright © HatioLab Inc. All rights reserved.
        * things-monitoring-behavior에 callback 함수로 전달한다.
        * *****
        */
-      pullRequest: function() {
-        this.$['polling-ajax'].generateRequest();
+      pullRequest: function () {
+        this.$["polling-ajax"].generateRequest();
       },
 
       /**
        * polling data responsed
-       * @param {Object} data pull 방식으로 조회한 데이터 
+       * @param {Object} data pull 방식으로 조회한 데이터
        * *****
        */
-      pollingResponseChanged: function(data) {
+      pollingResponseChanged: function (data) {
         this.messageReceived(data);
       },
 
       /**
-       * 모니터링 데이터를 받아 데이터 바인딩 
-       * @param {Object} message subscribe로 받은 데이터 
+       * 모니터링 데이터를 받아 데이터 바인딩
+       * @param {Object} message subscribe로 받은 데이터
        * *****
        */
-      messageReceived: function(message) {
+      messageReceived: function (message) {
         this.monitoringData = message;
-      }
+      },
     });
   </script>
 </dom-module>

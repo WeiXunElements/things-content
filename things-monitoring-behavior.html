@@ -1,157 +1,150 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
 <script>
-
-window.Things = window.Things || {};
-
-/**
- * 모니터링 Behavior
- * Scene 화면이 데이터를 받는 방법을 정의하면 데이터를 조회 (pull request 방식) 혹은 받아오는 (subscribe 방식) 동작을 정의한다.
- *
- * @polymerBehavior Things.MonitoringBehavior
- */
-Things.MonitoringBehaviorImpl = {
-
-	properties: {
-		/**
-		 * Scene Player 타입의 화면의 첫 페이지 routing 정보
-		 * scene player의 monitoring이 종료 되면 첫 페이지로 이동하고
-		 * 첫페이지에 할당된 monitoring 종료 event를 호출 하기 위해
-		 ******/
-    mainPage: {
-      type: String
-    },
-
-		/**
-		 * 데이터 모드 - subscribe / pull
-		 ******/
-		collectDataMode: {
-			type: String,
-			value: 'pull'
-		},
-
-		/**
-		 * Polling interval (second)
-		 ******/
-		pollingInterval: {
-			type: String
-		},
-
-		/**
-		 * 화면에서 정의한 things-ws-subscriber의 id를 받는다.
-		 ******/
-		subscriberId: {
-			type: Array
-		},
-
-		/**
-		 * Pull Request Callback function
-		 * 화면에서 정의한 pull request ajax 호출 함수를 받는다.
-		 ******/
-		pullRequestCallback: {
-			type: Function
-		},
-
-		/**
-		 * subscribe를 통해 메시지를 전달 받았을 때의 콜백 함수
-		 * 화면에서 정의한 함수를 받는다.
-		 ******/
-		subscriberCallback: {
-			type: Function
-		},
-
-		/**
-		 * Async polling
-		 ******/
-		_asyncPolling: {
-			type: Object
-		}
-	},
-
-	/**
-	 * Polling async start
-	 * *****
-	 */
-	startCollectData: function() {
-		// Start Polling
-		if(this.collectDataMode == 'pull-repeat') {
-			if(this._asyncPolling == null) {
-				this.collectDataByPolling();
-			}
-
-		} else if(this.collectDataMode == 'pull') {
-			this.pullRequestCallback();
-
-		// Start Subscribe
-		} else {
-			var subscriber = this.$[this.subscriberId];
-			var connected = subscriber.status();
-			if(!connected) {
-				subscriber.callback = this.subscriberCallback;
-				subscriber.start();
-			}
-		}
-	},
-
-	/**
-	 * Polling async clear and stop
-	 * *****
-	 */
-	stopCollectData: function() {
-		// Stop Polling
-		if(this.collectDataMode == 'pull' || this.collectDataMode == 'pull-repeat') {
-			if (this._asyncPolling) {
-				this.cancelAsync(this._asyncPolling);
-				this._asyncPolling = null;
-			}
-
-		// Stop Subscribe
-		} else {
-			var subscriber = this.$[this.subscriberId];
-			var connected = subscriber.status();
-			if(connected) {
-				subscriber.stop();
-			}
-		}
-
-		// mainPage가 있다면 (scene player라면) mainPage에 player-stop_mainPage 이벤트를 호출한다.
-		if(this.mainPage) {
-      var playerOffEvent = new CustomEvent('things-player-stop_' + this.mainPage, { detail: 'off'});
-      document.dispatchEvent(playerOffEvent);
-		}
-	},
-
-	/**
-	 * Collect Data By Polling
-	 * *****
-	 */
-	collectDataByPolling: function() {
-		this._asyncPolling = this.async(this.collectDataByPolling, this.pollingInterval);
-		this.pullRequestCallback();
-	},
-
+  window.Things = window.Things || {};
 
   /**
-   * Route change handler - override
-   * @param {Object} event
-   * *****
+   * 모니터링 Behavior
+   * Scene 화면이 데이터를 받는 방법을 정의하면 데이터를 조회 (pull request 방식) 혹은 받아오는 (subscribe 방식) 동작을 정의한다.
+   *
+   * @polymerBehavior Things.MonitoringBehavior
    */
-  _handlerRouteChange: function(event) {
-    if(event.detail && event.detail.initialParams) {
-      this.mainPage = event.detail.initialParams.mainPage;
-    } else {
-      this.mainPage = null;
-    }
-    if(this.menuParams != null) this.startCollectData();
-  }
-};
+  Things.MonitoringBehaviorImpl = {
+    properties: {
+      /**
+       * Scene Player 타입의 화면의 첫 페이지 routing 정보
+       * scene player의 monitoring이 종료 되면 첫 페이지로 이동하고
+       * 첫페이지에 할당된 monitoring 종료 event를 호출 하기 위해
+       ******/
+      mainPage: {
+        type: String,
+      },
 
-Things.MonitoringBehavior = [
-	Things.MonitoringBehaviorImpl
-];
+      /**
+       * 데이터 모드 - subscribe / pull
+       ******/
+      collectDataMode: {
+        type: String,
+        value: "pull",
+      },
 
+      /**
+       * Polling interval (second)
+       ******/
+      pollingInterval: {
+        type: String,
+      },
+
+      /**
+       * 화면에서 정의한 things-ws-subscriber의 id를 받는다.
+       ******/
+      subscriberId: {
+        type: Array,
+      },
+
+      /**
+       * Pull Request Callback function
+       * 화면에서 정의한 pull request ajax 호출 함수를 받는다.
+       ******/
+      pullRequestCallback: {
+        type: Function,
+      },
+
+      /**
+       * subscribe를 통해 메시지를 전달 받았을 때의 콜백 함수
+       * 화면에서 정의한 함수를 받는다.
+       ******/
+      subscriberCallback: {
+        type: Function,
+      },
+
+      /**
+       * Async polling
+       ******/
+      _asyncPolling: {
+        type: Object,
+      },
+    },
+
+    /**
+     * Polling async start
+     * *****
+     */
+    startCollectData: function () {
+      // Start Polling
+      if (this.collectDataMode == "pull-repeat") {
+        if (this._asyncPolling == null) {
+          this.collectDataByPolling();
+        }
+      } else if (this.collectDataMode == "pull") {
+        this.pullRequestCallback();
+
+        // Start Subscribe
+      } else {
+        var subscriber = this.$[this.subscriberId];
+        var connected = subscriber.status();
+        if (!connected) {
+          subscriber.callback = this.subscriberCallback;
+          subscriber.start();
+        }
+      }
+    },
+
+    /**
+     * Polling async clear and stop
+     * *****
+     */
+    stopCollectData: function () {
+      // Stop Polling
+      if (this.collectDataMode == "pull" || this.collectDataMode == "pull-repeat") {
+        if (this._asyncPolling) {
+          this.cancelAsync(this._asyncPolling);
+          this._asyncPolling = null;
+        }
+
+        // Stop Subscribe
+      } else {
+        var subscriber = this.$[this.subscriberId];
+        var connected = subscriber.status();
+        if (connected) {
+          subscriber.stop();
+        }
+      }
+
+      // mainPage가 있다면 (scene player라면) mainPage에 player-stop_mainPage 이벤트를 호출한다.
+      if (this.mainPage) {
+        var playerOffEvent = new CustomEvent("things-player-stop_" + this.mainPage, { detail: "off" });
+        document.dispatchEvent(playerOffEvent);
+      }
+    },
+
+    /**
+     * Collect Data By Polling
+     * *****
+     */
+    collectDataByPolling: function () {
+      this._asyncPolling = this.async(this.collectDataByPolling, this.pollingInterval);
+      this.pullRequestCallback();
+    },
+
+    /**
+     * Route change handler - override
+     * @param {Object} event
+     * *****
+     */
+    _handlerRouteChange: function (event) {
+      if (event.detail && event.detail.initialParams) {
+        this.mainPage = event.detail.initialParams.mainPage;
+      } else {
+        this.mainPage = null;
+      }
+      if (this.menuParams != null) this.startCollectData();
+    },
+  };
+
+  Things.MonitoringBehavior = [Things.MonitoringBehaviorImpl];
 </script>

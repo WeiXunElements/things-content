@@ -1,187 +1,193 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-	<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-detail/things-menu-detail-opener.html">
-<link rel="import" href="../things-global-behavior/things-global-behavior.html">
-<link rel="import" href="../things-meta/things-menu-meta-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../things-view-open-behavior/things-view-open-behavior.html">
+<link rel="import" href="../things-detail/things-menu-detail-opener.html" />
+<link rel="import" href="../things-global-behavior/things-global-behavior.html" />
+<link rel="import" href="../things-meta/things-menu-meta-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
+<link rel="import" href="../things-view-open-behavior/things-view-open-behavior.html" />
 
-<link rel="import" href="../iron-signals/iron-signals.html">
+<link rel="import" href="../iron-signals/iron-signals.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * 팝업 디테일 Behavior
+   *
+   * @polymerBehavior Things.DetailPopupBehavior
+   */
+  Things.DetailPopupBehaviorImpl = {
+    /**
+     * Life Cycle - Ready
+     */
+    ready: function () {
+      var grid = this.$["grid"];
+      if (grid) {
+        this.listen(grid, "things-grid-detail-tap", "showDetailView");
+      }
+    },
+    /**
+     * Detail 화면에 띄울 Element Object는 구성이 완료 되었으나 아직 dialog호출하지 않았을 때 fire되는 이벤트
+     * ****
+     * @event things-detail-view-configure-finished
+     * @type {Object} detail
+     * @property {Object} view - detail 화면에 표현될 Element Object
+     * @property {Boolean} modal - 모달로 띄울 것인지
+     * @property {Object} selectedRecord - 선택된 데이터
+     * @property {Function} saveCallback - 저장할때 호출되는 콜백 함수
+     */
 
-/**
- * 팝업 디테일 Behavior
- *
- * @polymerBehavior Things.DetailPopupBehavior
- */
-Things.DetailPopupBehaviorImpl = {
+    /**
+     * 상세화면의 설정이 things-resource-detail일 경우 dialog를 open하는 용도의 event
+     * ****
+     * @event things-open-menu-detail-view
+     * @type {Object} detail
+     * @property {Object} menuInfo - 소스화면의 메뉴정보
+     * @property {Object} resource - 선택된 데이터
+     * @property {Object} resourceFormFields - 폼에 등록될 수 있는 필드 설정 정보
+     * @property {Function} closeCallback - dialog가 꺼질때 호출되는 콜백 함수
+     */
 
-	/**
-	 * Life Cycle - Ready
-	 */
-	ready: function() {
-		var grid = this.$['grid'];
-		if(grid) {
-			this.listen(grid, 'things-grid-detail-tap', 'showDetailView');
-		}
-	},
-	/**
-	 * Detail 화면에 띄울 Element Object는 구성이 완료 되었으나 아직 dialog호출하지 않았을 때 fire되는 이벤트
-	 * ****
-	 * @event things-detail-view-configure-finished 
-	 * @type {Object} detail
-	 * @property {Object} view - detail 화면에 표현될 Element Object
-	 * @property {Boolean} modal - 모달로 띄울 것인지
-	 * @property {Object} selectedRecord - 선택된 데이터
-	 * @property {Function} saveCallback - 저장할때 호출되는 콜백 함수
-	 */
-	
-	/**
-	 * 상세화면의 설정이 things-resource-detail일 경우 dialog를 open하는 용도의 event
-	 * ****
-	 * @event things-open-menu-detail-view
-	 * @type {Object} detail
-	 * @property {Object} menuInfo - 소스화면의 메뉴정보
-	 * @property {Object} resource - 선택된 데이터
-	 * @property {Object} resourceFormFields - 폼에 등록될 수 있는 필드 설정 정보
-	 * @property {Function} closeCallback - dialog가 꺼질때 호출되는 콜백 함수
-	 */
-	
-	/**
-	 * Detail 화면에 띄울 Element Object는 구성이 완료 되어 dialog를 띄우기 위한 Event
-	 * ****
-	 * @event things-open-popup-view
-	 * @type {Object} detail
-	 * @property {Object} view - detail 화면에 표현될 Element Object
-	 * @property {Boolean} modal - 모달로 띄울 것인지
-	 * @property {Object} selectedRecord - 선택된 데이터
-	 * @property {Function} saveCallback - 저장할때 호출되는 콜백 함수
-	 */
-	
-	/**
-	 * 디테일 뷰를 표시한다.
-	 *****
-	 * @param {Event} event 그리드에서 선택된 event
-	 * @fires this#things-open-menu-detail-view
-	 * @listens grid#things-grid-detail-tap
-	 */
-	showDetailView: function(event) {
-		if(event.defaultPrevented || !event || !event.detail || (!event.detail[this.menuInfo.id_field] && !event.detail.id)) return;
+    /**
+     * Detail 화면에 띄울 Element Object는 구성이 완료 되어 dialog를 띄우기 위한 Event
+     * ****
+     * @event things-open-popup-view
+     * @type {Object} detail
+     * @property {Object} view - detail 화면에 표현될 Element Object
+     * @property {Boolean} modal - 모달로 띄울 것인지
+     * @property {Object} selectedRecord - 선택된 데이터
+     * @property {Function} saveCallback - 저장할때 호출되는 콜백 함수
+     */
 
-		if(!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == 'things-resource-form') {
-			this.showResourceForm(event.detail, this.refreshGridData.bind(this));
+    /**
+     * 디테일 뷰를 표시한다.
+     *****
+     * @param {Event} event 그리드에서 선택된 event
+     * @fires this#things-open-menu-detail-view
+     * @listens grid#things-grid-detail-tap
+     */
+    showDetailView: function (event) {
+      if (
+        event.defaultPrevented ||
+        !event ||
+        !event.detail ||
+        (!event.detail[this.menuInfo.id_field] && !event.detail.id)
+      )
+        return;
 
-		} else if(this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == 'things-resource-detail') {
-			if(this.menuInfo.detail_layout) {
-				var detail = { detail: { menuInfo: this.menuInfo, resource: event.detail, resourceFormFields: this.resourceFormFields, closeCallback: this.refreshGridData.bind(this)}};
-				var customEvent = new CustomEvent('things-open-menu-detail-view', detail);
-				document.dispatchEvent(customEvent);
-			}
-
-		} else if(this.menuInfo.detail_form_id != 'custom') {
-			this.showCustomView(this.menuInfo.detail_form_id, event.detail, this.refreshGridData.bind(this));
-		}
-	},
-
-	/**
-	 * 표준화된 리소스 디테일 폼을 표시한다.
-	 *****
-	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
-	 * @param {Function} saveCallback 저장 후 콜백 함수
-	 * @fires this#things-detail-view-configure-finished
-	 * @fires document#things-open-popup-view
-	 */
-	showResourceForm: function(selectedRecord, saveCallback) {
-		var viewElement = document.createElement('things-resource-form');
-		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		var eventDetail = { 'view': viewElement, 'modal': true, 'selectedRecord':selectedRecord,'saveCallback': saveCallback };
-		var evt = this.fire('things-detail-view-configure-finished', eventDetail, { cancelable: true });
-        if (!evt.defaultPrevented) {
-			var event = new CustomEvent('things-open-popup-view', { detail: eventDetail });
-			document.dispatchEvent(event);
+      if (!this.menuInfo.detail_form_id || this.menuInfo.detail_form_id == "things-resource-form") {
+        this.showResourceForm(event.detail, this.refreshGridData.bind(this));
+      } else if (this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == "things-resource-detail") {
+        if (this.menuInfo.detail_layout) {
+          var detail = {
+            detail: {
+              menuInfo: this.menuInfo,
+              resource: event.detail,
+              resourceFormFields: this.resourceFormFields,
+              closeCallback: this.refreshGridData.bind(this),
+            },
+          };
+          var customEvent = new CustomEvent("things-open-menu-detail-view", detail);
+          document.dispatchEvent(customEvent);
         }
-	},
-			
-	/**
-	 * 프레임 웍에서 기본으로 제공하지 않는 리소스 디테일 폼을 표시한다.
-	 *****
-	 * @param {String} detailViewId 상세 뷰 아이디
-	 * @param {Object} selectedRecord 그리드에서 선택된 Row Data
-	 * @param {Function} saveCallback 저장 후 콜백 함수
-	 * @fires this#things-detail-view-configure-finished
-	 */
-	showCustomView: function(detailViewId, selectedRecord, saveCallback) {
-		var viewElement = document.createElement(detailViewId);
-		viewElement.attachable = true;
-		viewElement.propExtensible = true;
-		viewElement.saveCallback = saveCallback;
-		this._setViewConfig('detail-view', viewElement, selectedRecord, saveCallback);
-		var eventDetail = { 'view': viewElement, 'modal': true, 'selectedRecord':selectedRecord,'saveCallback': saveCallback };
-		var evt = this.fire('things-detail-view-configure-finished', eventDetail, { cancelable: true });
+      } else if (this.menuInfo.detail_form_id != "custom") {
+        this.showCustomView(this.menuInfo.detail_form_id, event.detail, this.refreshGridData.bind(this));
+      }
+    },
 
-		if (!evt.defaultPrevented) {
-			var idValue = this.menuInfo.id_field ? selectedRecord[this.menuInfo.id_field] : selectedRecord.id;
-			viewElement.showDetailView(idValue, selectedRecord, null, saveCallback);
-		}
-	},
+    /**
+     * 표준화된 리소스 디테일 폼을 표시한다.
+     *****
+     * @param {Object} selectedRecord 그리드에서 선택된 Row Data
+     * @param {Function} saveCallback 저장 후 콜백 함수
+     * @fires this#things-detail-view-configure-finished
+     * @fires document#things-open-popup-view
+     */
+    showResourceForm: function (selectedRecord, saveCallback) {
+      var viewElement = document.createElement("things-resource-form");
+      this._setViewConfig("detail-view", viewElement, selectedRecord, saveCallback);
+      var eventDetail = { view: viewElement, modal: true, selectedRecord: selectedRecord, saveCallback: saveCallback };
+      var evt = this.fire("things-detail-view-configure-finished", eventDetail, { cancelable: true });
+      if (!evt.defaultPrevented) {
+        var event = new CustomEvent("things-open-popup-view", { detail: eventDetail });
+        document.dispatchEvent(event);
+      }
+    },
 
-	/**
-	 * 선택된 레코드로 상세 뷰 Properties를 설정한다.
-	 *****
-	 * @param {String} elementId
-	 * @param {Object} viewElement
-	 * @param {Object} selectedRecord
-	 * @param {Function} saveCallback 저장 후 콜백 함수
-	 * @listens viewElement#things-resource-form-saved
-	 * @listens viewElement#things-resource-form-created
-	 */
-	_setViewConfig: function(elementId, viewElement, selectedRecord, saveCallback) {
-		viewElement.id = elementId;
+    /**
+     * 프레임 웍에서 기본으로 제공하지 않는 리소스 디테일 폼을 표시한다.
+     *****
+     * @param {String} detailViewId 상세 뷰 아이디
+     * @param {Object} selectedRecord 그리드에서 선택된 Row Data
+     * @param {Function} saveCallback 저장 후 콜백 함수
+     * @fires this#things-detail-view-configure-finished
+     */
+    showCustomView: function (detailViewId, selectedRecord, saveCallback) {
+      var viewElement = document.createElement(detailViewId);
+      viewElement.attachable = true;
+      viewElement.propExtensible = true;
+      viewElement.saveCallback = saveCallback;
+      this._setViewConfig("detail-view", viewElement, selectedRecord, saveCallback);
+      var eventDetail = { view: viewElement, modal: true, selectedRecord: selectedRecord, saveCallback: saveCallback };
+      var evt = this.fire("things-detail-view-configure-finished", eventDetail, { cancelable: true });
 
-		if(selectedRecord && selectedRecord.name && selectedRecord.description) {
-			viewElement.title = selectedRecord.name + ' ( ' + selectedRecord.description +' )';
-		} else if (selectedRecord && selectedRecord[this.menuInfo.title_field]) {
-			viewElement.title = selectedRecord[this.menuInfo.title_field];
-		} else {
-			viewElement.title = this.menuInfo.title ? this.menuInfo.title : '';
-		}
+      if (!evt.defaultPrevented) {
+        var idValue = this.menuInfo.id_field ? selectedRecord[this.menuInfo.id_field] : selectedRecord.id;
+        viewElement.showDetailView(idValue, selectedRecord, null, saveCallback);
+      }
+    },
 
-		var idField = this.menuInfo.id_field;
-		viewElement.idField = idField;
-		viewElement.formFields = this.resourceFormFields;
-		viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
-		viewElement.resourceType = this.menuInfo.resource_name;
-		var resourceId = selectedRecord ? (selectedRecord[idField] ? selectedRecord[idField] : selectedRecord.id) : null;
-		viewElement.resourceId = resourceId;
-		if(selectedRecord) viewElement.resource = selectedRecord;
+    /**
+     * 선택된 레코드로 상세 뷰 Properties를 설정한다.
+     *****
+     * @param {String} elementId
+     * @param {Object} viewElement
+     * @param {Object} selectedRecord
+     * @param {Function} saveCallback 저장 후 콜백 함수
+     * @listens viewElement#things-resource-form-saved
+     * @listens viewElement#things-resource-form-created
+     */
+    _setViewConfig: function (elementId, viewElement, selectedRecord, saveCallback) {
+      viewElement.id = elementId;
 
-		var eventName = 'things-resource-form-saved';
-		if(resourceId) {
-			viewElement.resourceUrl = this.menuInfo.resource_url + '/:id';
+      if (selectedRecord && selectedRecord.name && selectedRecord.description) {
+        viewElement.title = selectedRecord.name + " ( " + selectedRecord.description + " )";
+      } else if (selectedRecord && selectedRecord[this.menuInfo.title_field]) {
+        viewElement.title = selectedRecord[this.menuInfo.title_field];
+      } else {
+        viewElement.title = this.menuInfo.title ? this.menuInfo.title : "";
+      }
 
-		} else {
-			eventName = 'things-resource-form-created';
-			viewElement.resourceUrl = this.menuInfo.resource_url;
-		}
+      var idField = this.menuInfo.id_field;
+      viewElement.idField = idField;
+      viewElement.formFields = this.resourceFormFields;
+      viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
+      viewElement.resourceType = this.menuInfo.resource_name;
+      var resourceId = selectedRecord ? (selectedRecord[idField] ? selectedRecord[idField] : selectedRecord.id) : null;
+      viewElement.resourceId = resourceId;
+      if (selectedRecord) viewElement.resource = selectedRecord;
 
-		viewElement.addEventListener(eventName, function(e) {
-			viewElement.closePopupView();
-			saveCallback.apply(this);
-		}.bind(this));
-	}
+      var eventName = "things-resource-form-saved";
+      if (resourceId) {
+        viewElement.resourceUrl = this.menuInfo.resource_url + "/:id";
+      } else {
+        eventName = "things-resource-form-created";
+        viewElement.resourceUrl = this.menuInfo.resource_url;
+      }
 
-};
+      viewElement.addEventListener(
+        eventName,
+        function (e) {
+          viewElement.closePopupView();
+          saveCallback.apply(this);
+        }.bind(this)
+      );
+    },
+  };
 
-Things.DetailPopupBehavior = [
-	Things.DetailPopupBehaviorImpl,
-	Things.ViewOpenBehavior
-];
-
+  Things.DetailPopupBehavior = [Things.DetailPopupBehaviorImpl, Things.ViewOpenBehavior];
 </script>

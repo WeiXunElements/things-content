@@ -1,8 +1,8 @@
 {
   "name": "things-content",
-  "version": "v2.2.11",
+  "version": "v2.2.12",
   "authors": [
-    "Hatio Lab. <heartyoh@hatiolab.com>"
+    "Shenzhen Weixun"
   ],
   "description": "화면 표시에 대한 정보 컴포넌트",
   "keywords": [
@@ -11,8 +11,6 @@
     "seed"
   ],
   "main": "things-resource-menu-content.html",
-  "license": "http://license.hatiolab.com/EULA",
-  "homepage": "http://elements.hatiolab.com/",
   "ignore": [
     "/.*",
     "/test/"

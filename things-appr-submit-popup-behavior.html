@@ -1,135 +1,133 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../iron-signals/iron-signals.html">
+<link rel="import" href="../iron-signals/iron-signals.html" />
 
-<link rel="import" href="../things-view-open-behavior/things-view-open-behavior.html">
+<link rel="import" href="../things-view-open-behavior/things-view-open-behavior.html" />
 
-<link rel="import" href="./things-detail-popup-behavior.html">
-<link rel="import" href="./things-resource-detail-view-open-behavior.html">
+<link rel="import" href="./things-detail-popup-behavior.html" />
+<link rel="import" href="./things-resource-detail-view-open-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * 심사 승인을 위한 기안 팝업 디테일 Behavior
+   *
+   * @polymerBehavior Things.ApprSubmitPopupBehavior
+   */
+  Things.ApprSubmitPopupBehaviorImpl = {
+    /**
+     * Life Cycle - Ready
+     */
+    ready: function () {
+      var grid = this.$["grid"];
+      if (grid) {
+        this.listen(grid, "things-grid-handle-request-release", "configureDetailForm");
+      }
+    },
+    /**
+     * detail form구성
+     ****
+     * @param {Object} event - 그리드에서 선택 후 승인요청을 클릭할 경우 발생되는 Event
+     * @listens grid#things-grid-handle-request-release
+     */
+    configureDetailForm: function (event) {
+      var selectedRecord = event.detail.row;
+      if (selectedRecord) {
+        selectedRecord.__buttonType = "request-release";
+        event.detail = Object.assign({}, selectedRecord);
+        this.listen(this, "things-detail-view-configure-finished", "showRequestReleaseForm");
+        if (this.menuInfo.detail_form_id && this.menuInfo.detail_form_id == "things-resource-detail") {
+          this.initOpener(
+            this.menuInfo,
+            event.detail,
+            function () {},
+            this.refreshGridData.bind(this),
+            this.resourceFormFields
+          );
+        } else {
+          this.showDetailView(event);
+        }
+      } else {
+        if (event.detail.rows && event.detail.rows.length > 1) {
+          this.openInfoMsg({
+            type: "error",
+            title: Things.DataGlobal.t("error.VALIDATION_ERROR"),
+            text: Things.DataGlobal.t("error.too_many_data_selected"),
+          });
+        } else {
+          this.openInfoMsg({
+            type: "error",
+            title: Things.DataGlobal.t("error.VALIDATION_ERROR"),
+            text: Things.DataGlobal.t("text.No Data"),
+          });
+        }
+      }
+    },
 
-/**
- * 심사 승인을 위한 기안 팝업 디테일 Behavior
- *
- * @polymerBehavior Things.ApprSubmitPopupBehavior
- */
-Things.ApprSubmitPopupBehaviorImpl = {
+    /**
+     * 상세화면의 설정이 things-resource-detail일 경우 승인 요청 폼을 화면에 표시하는 로직
+     *********
+     * @param {Event} event - detail popup behavior에서 발생되는 `things-detail-view-configure-finished` Event
+     * @listens viewElement#things-detail-view-configure-finished
+     */
+    showRequestReleaseForm: function (event) {
+      if (
+        event.detail &&
+        event.detail.selectedRecord &&
+        event.detail.selectedRecord.__buttonType == "request-release"
+      ) {
+        event.preventDefault();
+        var viewElement = document.createElement("things-base-works-request-release-form");
+        viewElement.detailView = event.detail.view;
+        viewElement.detailView.menuInfo = this.menuInfo;
+        viewElement.detailView.resource = event.detail.selectedRecord;
+        viewElement.addDetailView(viewElement.detailView);
+        viewElement.title = Things.DataGlobal.t("label.appr_doc");
+        this.openPopupView(viewElement, true);
+      }
+      this.unlisten(this, "things-detail-view-configure-finished", "showRequestReleaseForm");
+    },
+    /**
+     * 상세화면의 설정이 things-resource-detail일 경우 상세화면 구성
+     ****
+     * @param {Object} menuInfo - 메인화면에서의 화면 메뉴정보
+     * @param {Object} resource - 선택된 그리드나 데이터의 Object
+     * @param {Object} openCallback - Dialog를 열때 호출되는 Callback 함수
+     * @param {Object} closeCallback - Dialog를 닫을때 호출되는 Callback 함수
+     * @param {Object} resourceFormFields - 리소스 폼사용시 적용되는 필드 명들
+     * @listens viewElement#things-request-release-detail-view-added
+     */
+    initOpener: function (menuInfo, resource, openCallback, closeCallback, resourceFormFields) {
+      var viewElement = document.createElement("things-base-works-request-release-form");
+      viewElement.menuInfo = menuInfo;
+      viewElement.resource = resource;
+      viewElement.resourceFormFields = resourceFormFields;
+      viewElement.title = Things.DataGlobal.t("label.appr_doc");
+      var self = this;
+      var viewAddHandle = function (event) {
+        var clsCallback = function () {
+          closeCallback();
+          viewElement.removeEventListener("things-request-release-detail-view-added", viewAddHandle);
+        };
+        self.openPopupView(viewElement, true, openCallback, clsCallback);
+      };
+      viewElement.addEventListener("things-request-release-detail-view-added", viewAddHandle);
+    },
+    /**
+     * Life Cycle - detached
+     */
+    detached: function () {
+      var grid = this.$["grid"];
+      if (grid) {
+        this.unlisten(grid, "things-grid-handle-request-release", "configureDetailForm");
+      }
+    },
+  };
 
-	/**
-	 * Life Cycle - Ready
-	 */
-	ready: function() {
-		var grid = this.$['grid'];
-		if(grid) {
-			this.listen(grid, 'things-grid-handle-request-release', 'configureDetailForm');
-		}
-	},
-	/**
-	* detail form구성
-	****
-	* @param {Object} event - 그리드에서 선택 후 승인요청을 클릭할 경우 발생되는 Event
-	* @listens grid#things-grid-handle-request-release
-	*/
-	configureDetailForm: function(event){
-		var selectedRecord = event.detail.row;
-		if(selectedRecord){
-			selectedRecord.__buttonType='request-release'
-			event.detail = Object.assign({},selectedRecord);
-			this.listen(this, 'things-detail-view-configure-finished', 'showRequestReleaseForm');
-			if(this.menuInfo.detail_form_id && 
-				this.menuInfo.detail_form_id == 'things-resource-detail'){
-				this.initOpener(this.menuInfo, 
-								event.detail,
-								function(){},
-								this.refreshGridData.bind(this),
-								this.resourceFormFields);
-			}else{
-				this.showDetailView(event);
-			}
-		}else{
-
-			if(event.detail.rows && event.detail.rows.length>1){
-				this.openInfoMsg({
-					type: 'error',
-					title: Things.DataGlobal.t('error.VALIDATION_ERROR'),
-					text: Things.DataGlobal.t('error.too_many_data_selected')
-				});
-			}else{
-				this.openInfoMsg({
-					type: 'error',
-					title: Things.DataGlobal.t('error.VALIDATION_ERROR'),
-					text: Things.DataGlobal.t('text.No Data')
-				});
-			}
-		}
-	},
-
-	/**
-	 * 상세화면의 설정이 things-resource-detail일 경우 승인 요청 폼을 화면에 표시하는 로직
-	 *********
-	 * @param {Event} event - detail popup behavior에서 발생되는 `things-detail-view-configure-finished` Event
-	 * @listens viewElement#things-detail-view-configure-finished
-	 */
-	showRequestReleaseForm: function(event) {
-		if(event.detail && event.detail.selectedRecord && event.detail.selectedRecord.__buttonType=='request-release'){
-			event.preventDefault();
-			var viewElement = document.createElement('things-base-works-request-release-form');
-			viewElement.detailView = event.detail.view;
-			viewElement.detailView.menuInfo = this.menuInfo; 
-			viewElement.detailView.resource = event.detail.selectedRecord;
-			viewElement.addDetailView(viewElement.detailView);
-			viewElement.title = Things.DataGlobal.t('label.appr_doc');
-			this.openPopupView(viewElement, true);
-		}
-		this.unlisten(this, 'things-detail-view-configure-finished', 'showRequestReleaseForm');
-	},
-	/**
-	* 상세화면의 설정이 things-resource-detail일 경우 상세화면 구성
-	****
-	* @param {Object} menuInfo - 메인화면에서의 화면 메뉴정보
-	* @param {Object} resource - 선택된 그리드나 데이터의 Object
-	* @param {Object} openCallback - Dialog를 열때 호출되는 Callback 함수
-	* @param {Object} closeCallback - Dialog를 닫을때 호출되는 Callback 함수
-	* @param {Object} resourceFormFields - 리소스 폼사용시 적용되는 필드 명들
-	* @listens viewElement#things-request-release-detail-view-added
-	*/
-	initOpener: function(menuInfo, resource, openCallback, closeCallback, resourceFormFields) {
-		var viewElement = document.createElement('things-base-works-request-release-form');    
-		viewElement.menuInfo = menuInfo; 
-		viewElement.resource = resource;
-		viewElement.resourceFormFields = resourceFormFields;
-		viewElement.title = Things.DataGlobal.t('label.appr_doc');
-		var self = this;
-		var viewAddHandle = function(event){
-			var clsCallback = function(){
-				closeCallback();
-				viewElement.removeEventListener('things-request-release-detail-view-added',viewAddHandle);
-			}
-			self.openPopupView(viewElement, true, openCallback, clsCallback);
-		}
-		viewElement.addEventListener('things-request-release-detail-view-added',viewAddHandle)
-	},
-	/**
-	 * Life Cycle - detached
-	 */
-	detached: function(){
-		var grid = this.$['grid'];
-		if(grid) {
-			this.unlisten(grid, 'things-grid-handle-request-release', 'configureDetailForm');
-		}
-	}
-};
-
-Things.ApprSubmitPopupBehavior = [
-	Things.ApprSubmitPopupBehaviorImpl,
-	Things.ViewOpenBehavior
-];
-
+  Things.ApprSubmitPopupBehavior = [Things.ApprSubmitPopupBehaviorImpl, Things.ViewOpenBehavior];
 </script>

@@ -1,223 +1,223 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../iron-signals/iron-signals.html">
+<link rel="import" href="../iron-signals/iron-signals.html" />
 
-<link rel="import" href="../things-global-behavior/things-global-behavior.html">
-<link rel="import" href="../things-meta/things-menu-meta-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../things-global-behavior/things-global-behavior.html" />
+<link rel="import" href="../things-meta/things-menu-meta-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * 메뉴 설정을 기반으로 검색 폼에 대한 액션 정의 Behavior
+   *
+   * @polymerBehavior Things.MenuContentBehavior
+   */
+  Things.MenuContentBehaviorImpl = {
+    properties: {
+      /**
+       * 조회 결과
+       ******/
+      menuInfo: {
+        type: Object,
+        observer: "_menuInfoChanged",
+      },
 
-/**
- * 메뉴 설정을 기반으로 검색 폼에 대한 액션 정의 Behavior
- *
- * @polymerBehavior Things.MenuContentBehavior
- */
-Things.MenuContentBehaviorImpl = {
+      /**
+       * 라우팅 변경시 넘어오는 검색 조건
+       * 검색 조건이 설정되면 자동으로 서버에 검색을 요청한다.
+       ******/
+      initialSearchParams: {
+        type: Object,
+        observer: "_initialSearchParamsChanged",
+      },
 
-	properties: {
-		/**
-		 * 조회 결과
-		 ******/
-		menuInfo: {
-			type: Object,
-			observer: '_menuInfoChanged'
-		},
+      /**
+       * 조회 결과
+       ******/
+      lastResponse: {
+        type: Object,
+        observer: "_responseChanged",
+      },
 
-		/**
-		 * 라우팅 변경시 넘어오는 검색 조건
-		 * 검색 조건이 설정되면 자동으로 서버에 검색을 요청한다.
-		 ******/
-		initialSearchParams: {
-			type: Object,
-			observer: '_initialSearchParamsChanged'
-		},
+      /**
+       * 조회 결과 리스트 데이터 프로퍼티 명
+       ******/
+      itemsProp: {
+        type: String,
+        value: "items",
+      },
 
-		/**
-		 * 조회 결과
-		 ******/
-		lastResponse: {
-			type: Object,
-			observer: '_responseChanged'
-		},
+      /**
+       * 조회 결과 리스트 Total Count 프로퍼티 명
+       ******/
+      totalProp: {
+        type: String,
+        value: "total",
+      },
 
-		/**
-		 * 조회 결과 리스트 데이터 프로퍼티 명
-		 ******/
-		itemsProp: {
-			type: String,
-			value: 'items'
-		},
+      /**
+       * 조회 결과 리스트 데이터
+       ******/
+      items: {
+        type: Array,
+      },
 
-		/**
-		 * 조회 결과 리스트 Total Count 프로퍼티 명
-		 ******/
-		totalProp: {
-			type: String,
-			value: 'total'
-		},
+      /**
+       * 조회 결과 레코드 수
+       ******/
+      itemCount: {
+        type: Number,
+      },
 
-		/**
-		 * 조회 결과 리스트 데이터
-		 ******/
-		items: {
-			type: Array
-		},
+      /**
+       * 화면 구성된 이후 최초 데이터 자동 조회 여부
+       ******/
+      initialSearchFlag: {
+        type: Boolean,
+        value: true,
+      },
+    },
 
-		/**
-		 * 조회 결과 레코드 수
-		 ******/
-		itemCount: {
-			type: Number
-		},
+    /**
+     * Life Cycle - Ready
+     */
+    ready: function () {
+      var form = this.getResourceSearchForm();
+      if (form && !this.initialSearchParams) {
+        this.listen(form, "things-search-form-configured", "refreshData");
+      }
+    },
 
-		/**
-		 * 화면 구성된 이후 최초 데이터 자동 조회 여부
-		 ******/
-		initialSearchFlag: {
-			type: Boolean,
-			value: true
-		}
-	},
+    /**
+     * 초기 검색 파라미터 설정
+     * *****
+     */
+    _initialSearchParamsChanged: function (initialSearchParams) {
+      var searchForm = this.getResourceSearchForm();
+      if (searchForm && searchForm.isFormConfigured()) {
+        searchForm.setFormData(initialSearchParams);
+        searchForm.submitMyForm();
+      }
+    },
 
-	/**
-	 * Life Cycle - Ready
-	 */
-	ready: function() {
-		var form = this.getResourceSearchForm();
-		if(form && !this.initialSearchParams) {
-			this.listen(form, 'things-search-form-configured', 'refreshData');
-		}
-	},
+    /**
+     * Resource Search Form을 리턴한다.
+     * *****
+     */
+    getResourceSearchForm: function () {
+      return this.$["search-form"];
+    },
 
-	/**
-	 * 초기 검색 파라미터 설정
-	 * *****
-	 */
-	_initialSearchParamsChanged: function(initialSearchParams) {
-		var searchForm = this.getResourceSearchForm();
-		if(searchForm && searchForm.isFormConfigured()) {
-			searchForm.setFormData(initialSearchParams);
-			searchForm.submitMyForm();
-		}
-	},
+    /**
+     * ID Field를 리턴한다.
+     * *****
+     */
+    getIdField: function () {
+      return this.menuInfo && this.menuInfo.id_field ? this.menuInfo.id_field : "id";
+    },
 
-	/**
-	 * Resource Search Form을 리턴한다.
-	 * *****
-	 */
-	getResourceSearchForm: function() {
-		return this.$['search-form'];
-	},
+    /**
+     * Title Field를 리턴한다.
+     * *****
+     */
+    getTitleField: function () {
+      return this.menuInfo && this.menuInfo.title_field ? this.menuInfo.title_field : "name";
+    },
 
-	/**
-	 * ID Field를 리턴한다.
-	 * *****
-	 */
-	getIdField: function() {
-		return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
-	},
+    /**
+     * 메뉴 메타데이터 변경시
+     * @param {Object} menuInfo 메뉴 정보
+     ******
+     */
+    _menuInfoChanged: function (menuInfo) {
+      if (menuInfo) {
+        this.menuId = menuInfo.id;
+        this.routingChanged(menuInfo.routing);
+        this.itemsProp = menuInfo.items_prop;
+        this.totalProp = menuInfo.total_prop;
+        this.autoFilter = menuInfo.menu_type == "FILTERED_SCREEN";
+        var searchForm = this.getResourceSearchForm();
 
-	/**
-	 * Title Field를 리턴한다.
-	 * *****
-	 */
-	getTitleField: function() {
-		return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
-	},
+        if (searchForm) {
+          searchForm.paramType =
+            menuInfo.resource_type == "ENTITY" ? "RESOURCE" : menuInfo.resource_type == "DIY_SERVICE" ? "DIY" : null;
+        }
+      }
+    },
 
-	/**
-	 * 메뉴 메타데이터 변경시
-	 * @param {Object} menuInfo 메뉴 정보
-   ******
-	 */
-	_menuInfoChanged: function(menuInfo) {
-		if(menuInfo) {
-			this.menuId = menuInfo.id;
-			this.routingChanged(menuInfo.routing);
-			this.itemsProp = menuInfo.items_prop;
-			this.totalProp = menuInfo.total_prop;
-			this.autoFilter = (menuInfo.menu_type == 'FILTERED_SCREEN');
-			var searchForm = this.getResourceSearchForm();
+    /**
+     * Route Changed
+     * @param {String} routing 라우팅
+     * *****
+     */
+    routingChanged: function (routing) {
+      document.addEventListener(
+        "things-routing-changed-" + routing,
+        function (event) {
+          this._handlerRouteChange(event);
+        }.bind(this)
+      );
+    },
 
-			if(searchForm) {
-				searchForm.paramType = (menuInfo.resource_type == 'ENTITY') ? 'RESOURCE' : (menuInfo.resource_type == 'DIY_SERVICE' ? 'DIY' : null);
-			}
-		}
-	},
+    /**
+     * Route change handler
+     * @param {Object} event 라우트 변경 이벤트
+     * *****
+     */
+    _handlerRouteChange: function (event) {
+      // 1. 페이지 전환시 초기 파라미터 세팅
+      if (event.detail && event.detail.initialParams) {
+        var initialParams = event.detail.initialParams;
+        delete initialParams["path"];
+        if (JSON.stringify(initialParams) !== JSON.stringify({})) {
+          this.initialSearchParams = initialParams;
+        }
+      }
+    },
 
-	/**
-	 * Route Changed
-	 * @param {String} routing 라우팅
-	 * *****
-	 */
-	routingChanged: function(routing) {
-		document.addEventListener('things-routing-changed-' + routing, function(event) {
-			this._handlerRouteChange(event);
-		}.bind(this));
-	},
+    /**
+     * 조회 데이터 변경시
+     * @param {Object} lastResponse
+     ******
+     */
+    _responseChanged: function (lastResponse) {
+      this.items = this.itemsProp && lastResponse[this.itemsProp] ? lastResponse[this.itemsProp] : lastResponse;
+      this.itemCount =
+        this.totalProp && lastResponse[this.totalProp] ? lastResponse[this.totalProp] : lastResponse.length;
+    },
 
-	/**
-	 * Route change handler
-	 * @param {Object} event 라우트 변경 이벤트
-	 * *****
-	 */
-	_handlerRouteChange: function(event) {
-		// 1. 페이지 전환시 초기 파라미터 세팅
-		if(event.detail && event.detail.initialParams) {
-			var initialParams = event.detail.initialParams;
-			delete initialParams['path'];
-			if(JSON.stringify(initialParams) !== JSON.stringify({})) {
-				this.initialSearchParams = initialParams;
-			}
-		}
-	},
+    /**
+     * 데이터 새로 조회
+     * *****
+     */
+    refreshData: function () {
+      const searchForm = this.getResourceSearchForm();
+      if (!searchForm) return;
 
-	/**
-	 * 조회 데이터 변경시
-	 * @param {Object} lastResponse
-	 ******
-	 */
-	_responseChanged: function(lastResponse) {
-		this.items = (this.itemsProp && lastResponse[this.itemsProp]) ? lastResponse[this.itemsProp] : lastResponse;
-		this.itemCount = (this.totalProp && lastResponse[this.totalProp]) ? lastResponse[this.totalProp] : lastResponse.length;
-	},
+      if (this.initialSearchFlag) {
+        if (!searchForm.legacyData || JSON.stringify(searchForm.legacyData) === "{}") {
+          if (this.initialSearchParams) searchForm.setFormData(this.initialSearchParams);
+          searchForm.submitMyForm();
+        }
+      }
 
-	/**
-	 * 데이터 새로 조회
-	 * *****
-	 */
-	refreshData: function() {
-		const searchForm = this.getResourceSearchForm();
-		if (!searchForm)
-			return;
+      if (searchForm.legacyData && JSON.stringify(searchForm.legacyData) !== "{}") {
+        searchForm.setFormData(searchForm.legacyData);
+        searchForm.legacyData = null;
+      }
+    },
+  };
 
-		if (this.initialSearchFlag) {
-			if (!searchForm.legacyData || JSON.stringify(searchForm.legacyData) === '{}') {
-				if (this.initialSearchParams)
-					searchForm.setFormData(this.initialSearchParams);
-				searchForm.submitMyForm();
-			}
-		}
-
-		if (searchForm.legacyData && JSON.stringify(searchForm.legacyData) !== '{}') {
-			searchForm.setFormData(searchForm.legacyData);
-			searchForm.legacyData = null;
-		}
-	}
-};
-
-Things.MenuContentBehavior = [
-	Things.MenuContentBehaviorImpl,
-	Things.MenuMetaBehavior,
-	Things.MsgBoxBehavior,
-	Things.GlobalBehavior
-];
-
+  Things.MenuContentBehavior = [
+    Things.MenuContentBehaviorImpl,
+    Things.MenuMetaBehavior,
+    Things.MsgBoxBehavior,
+    Things.GlobalBehavior,
+  ];
 </script>

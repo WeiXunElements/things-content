@@ -1,27 +1,27 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../iron-icon/iron-icon.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../iron-icons/social-icons.html">
-<link rel="import" href="../iron-icons/maps-icons.html">
-<link rel="import" href="../iron-iconset/iron-iconset.html">
-<link rel="import" href="../iron-iconset-svg/iron-iconset-svg.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../iron-icon/iron-icon.html" />
+<link rel="import" href="../iron-icons/iron-icons.html" />
+<link rel="import" href="../iron-icons/social-icons.html" />
+<link rel="import" href="../iron-icons/maps-icons.html" />
+<link rel="import" href="../iron-iconset/iron-iconset.html" />
+<link rel="import" href="../iron-iconset-svg/iron-iconset-svg.html" />
+<link rel="import" href="../paper-icon-button/paper-icon-button.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-button/things-button.html">
-<link rel="import" href="../things-form/things-resource-form.html">
-<link rel="import" href="../things-form/things-search-form.html">
-<link rel="import" href="../things-full-dialog/things-full-dialog.html">
-<link rel="import" href="../things-grid/things-resource-grid.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-button/things-button.html" />
+<link rel="import" href="../things-form/things-resource-form.html" />
+<link rel="import" href="../things-form/things-search-form.html" />
+<link rel="import" href="../things-full-dialog/things-full-dialog.html" />
+<link rel="import" href="../things-grid/things-resource-grid.html" />
 
-<link rel="import" href="./things-menu-grid-content-behavior.html">
-<link rel="import" href="./things-detail-popup-behavior.html">
-<link rel="import" href="./things-appr-submit-popup-behavior.html">
+<link rel="import" href="./things-menu-grid-content-behavior.html" />
+<link rel="import" href="./things-detail-popup-behavior.html" />
+<link rel="import" href="./things-appr-submit-popup-behavior.html" />
 
 <!--
 하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋 
@@ -38,86 +38,85 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 -->
 
 <dom-module id="things-resource-menu-content">
-	<template>
-		<style>
-			:host {
-				display: block;
-				@apply(--layout-vertical);
-				@apply(--layout-flex);
-			}
-			
-			things-resource-grid {
-				@apply(--layout-flex);
-			}
-		</style>
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply (--layout-vertical);
+        @apply (--layout-flex);
+      }
 
-		<things-ajax 
-			auto
-			id="resource-meta"
-			method="GET"
-			resource-url="[[menuMetaUrl]]"
-			on-things-ajax-response="onAjaxResponse">
-		</things-ajax>
+      things-resource-grid {
+        @apply (--layout-flex);
+      }
+    </style>
 
-		<things-search-form 
-			id="search-form"
-			form-fields="[[searchFormFields]]" 
-			select-fields="[[selectFields]]"
-			sort-fields="[[sortFields]]"
-			action-url="[[menuInfo.resource_url]]" 
-			page="{{page}}"
-			limit="[[limit]]"
-			last-response="{{lastResponse}}">
-		</things-search-form>
+    <things-ajax
+      auto
+      id="resource-meta"
+      method="GET"
+      resource-url="[[menuMetaUrl]]"
+      on-things-ajax-response="onAjaxResponse"
+    >
+    </things-ajax>
 
-		<things-resource-grid 
-			id="grid"
-			grid-height="[[gridHeight]]"
-			auto-filter = "[[autoFilter]]"
-			model="[[gridModel]]" 
-			columns="[[gridColumns]]"
-			config="[[gridConfig]]"
-			buttons="[[buttons]]"
-			current-page="{{page}}"
-			limit="{{limit}}"
-			data="[[items]]"
-			total-count="[[itemCount]]"
-			grid-save-action="[[menuInfo.grid_save_url]]"
-			fixed-column-count="[[menuInfo.fixed_columns]]"
-			export-file-name="[[menuInfo.title]]"
-			export-sheet-name="[[menuInfo.title]]"
-			diy-template-id="[[menuInfo.diy_template_id]]">
-		</things-resource-grid>
-	</template>
+    <things-search-form
+      id="search-form"
+      form-fields="[[searchFormFields]]"
+      select-fields="[[selectFields]]"
+      sort-fields="[[sortFields]]"
+      action-url="[[menuInfo.resource_url]]"
+      page="{{page}}"
+      limit="[[limit]]"
+      last-response="{{lastResponse}}"
+    >
+    </things-search-form>
 
-	<script>
-		Polymer({
-			is: 'things-resource-menu-content',
+    <things-resource-grid
+      id="grid"
+      grid-height="[[gridHeight]]"
+      auto-filter="[[autoFilter]]"
+      model="[[gridModel]]"
+      columns="[[gridColumns]]"
+      config="[[gridConfig]]"
+      buttons="[[buttons]]"
+      current-page="{{page}}"
+      limit="{{limit}}"
+      data="[[items]]"
+      total-count="[[itemCount]]"
+      grid-save-action="[[menuInfo.grid_save_url]]"
+      fixed-column-count="[[menuInfo.fixed_columns]]"
+      export-file-name="[[menuInfo.title]]"
+      export-sheet-name="[[menuInfo.title]]"
+      diy-template-id="[[menuInfo.diy_template_id]]"
+    >
+    </things-resource-grid>
+  </template>
 
-			properties: {
-				initialSearchFlag: {
-					type: Boolean,
-					value: true
-				}
-			},
+  <script>
+    Polymer({
+      is: "things-resource-menu-content",
 
-			behaviors: [
-				Things.MenuGridContentBehavior,
-				Things.DetailPopupBehavior,
-				Things.ApprSubmitPopupBehavior
-			],
+      properties: {
+        initialSearchFlag: {
+          type: Boolean,
+          value: true,
+        },
+      },
 
-			onAjaxResponse: function(event) {
-				const menuParams = event.detail.menu_params;
-				if (menuParams && menuParams.length > 0) {
-					const initSearchParam = menuParams.find(item => item.name === 'init_search');
-					if (initSearchParam) {
-						this.initialSearchFlag = initSearchParam['value'] == 'true';
-					}
-				}
+      behaviors: [Things.MenuGridContentBehavior, Things.DetailPopupBehavior, Things.ApprSubmitPopupBehavior],
 
-				this.metaData = event.detail;
-			}
-		});
-	</script>
+      onAjaxResponse: function (event) {
+        const menuParams = event.detail.menu_params;
+        if (menuParams && menuParams.length > 0) {
+          const initSearchParam = menuParams.find((item) => item.name === "init_search");
+          if (initSearchParam) {
+            this.initialSearchFlag = initSearchParam["value"] == "true";
+          }
+        }
+
+        this.metaData = event.detail;
+      },
+    });
+  </script>
 </dom-module>

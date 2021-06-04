@@ -1,28 +1,26 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="./things-menu-content-behavior.html">
-<link rel="import" href="./things-menu-grid-content-behavior.html">
-<link rel="import" href="./things-detail-popup-behavior.html">
-<link rel="import" href="./things-appr-submit-popup-behavior.html">
+<link rel="import" href="./things-menu-content-behavior.html" />
+<link rel="import" href="./things-menu-grid-content-behavior.html" />
+<link rel="import" href="./things-detail-popup-behavior.html" />
+<link rel="import" href="./things-appr-submit-popup-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
-
-/**
- * 리소스 타입 메뉴 화면 Behavior
- *
- * @polymerBehavior Things.ResourceMenuContentBehavior
- */
-Things.ResourceMenuContentBehavior = [
-	Things.MenuContentBehavior,
-	Things.MenuGridContentBehavior,
-	Things.DetailPopupBehavior,
-	Things.ApprSubmitPopupBehavior
-];
-
+  /**
+   * 리소스 타입 메뉴 화면 Behavior
+   *
+   * @polymerBehavior Things.ResourceMenuContentBehavior
+   */
+  Things.ResourceMenuContentBehavior = [
+    Things.MenuContentBehavior,
+    Things.MenuGridContentBehavior,
+    Things.DetailPopupBehavior,
+    Things.ApprSubmitPopupBehavior,
+  ];
 </script>

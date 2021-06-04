@@ -1,16 +1,16 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-form/things-resource-form.html">
-<link rel="import" href="../things-form/things-search-form.html">
-<link rel="import" href="../things-grid/things-resource-grid.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-form/things-resource-form.html" />
+<link rel="import" href="../things-form/things-search-form.html" />
+<link rel="import" href="../things-grid/things-resource-grid.html" />
 
-<link rel="import" href="./things-menu-grid-content-behavior.html">
-<link rel="import" href="./things-detail-view-behavior.html">
+<link rel="import" href="./things-menu-grid-content-behavior.html" />
+<link rel="import" href="./things-detail-view-behavior.html" />
 
 <!--
 하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋
@@ -27,172 +27,165 @@ Things Reource Content는 검색 폼, 그리드, 상세 폼이 기본으로 표�
 -->
 
 <dom-module id="things-standard-menu-content">
-	<template>
-		<style>
-			:host {
-				display: block;
-				@apply(--layout-vertical);
-				@apply(--layout-flex);
-			}
-			.flex-horizontal-with-ratios {
-				@apply(--layout-horizontal);
-				@apply(--layout-flex);
-			}
-			.flexchild {
-				@apply(--layout-flex);
-			}
-			.flex2child {
-				@apply(--layout-flex-2);
-			}
-			.flex3child {
-				@apply(--layout-flex-3);
-			}
-			.flex4child {
-				@apply(--layout-flex-4);
-			}
-			.flex5child {
-				@apply(--layout-flex-5);
-			}
-/*			div.flex-horizontal-with-ratios {
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply (--layout-vertical);
+        @apply (--layout-flex);
+      }
+      .flex-horizontal-with-ratios {
+        @apply (--layout-horizontal);
+        @apply (--layout-flex);
+      }
+      .flexchild {
+        @apply (--layout-flex);
+      }
+      .flex2child {
+        @apply (--layout-flex-2);
+      }
+      .flex3child {
+        @apply (--layout-flex-3);
+      }
+      .flex4child {
+        @apply (--layout-flex-4);
+      }
+      .flex5child {
+        @apply (--layout-flex-5);
+      }
+      /*			div.flex-horizontal-with-ratios {
 				height: 100%;
 			}*/
-			.subtitle:before {
-				content: '';
-				@apply(--things-subtitle-icon);
-			}
-			.subtitle {
-				@apply(--things-default-padding);
-				@apply(--things-subtitle);
-			}
-		</style>
+      .subtitle:before {
+        content: "";
+        @apply (--things-subtitle-icon);
+      }
+      .subtitle {
+        @apply (--things-default-padding);
+        @apply (--things-subtitle);
+      }
+    </style>
 
-		<things-ajax
-			auto
-			id="resource-meta"
-			method="GET"
-			resource-url="[[menuMetaUrl]]"
-			last-response="{{metaData}}">
-		</things-ajax>
+    <things-ajax auto id="resource-meta" method="GET" resource-url="[[menuMetaUrl]]" last-response="{{metaData}}">
+    </things-ajax>
 
-		<things-search-form
-			id="search-form"
-			form-fields="[[searchFormFields]]"
-			select-fields="[[selectFields]]"
-			sort-fields="[[sortFields]]"
-			action-url="[[menuInfo.resource_url]]"
-			page="{{page}}"
-			limit="[[limit]]"
-			last-response="{{lastResponse}}">
-		</things-search-form>
+    <things-search-form
+      id="search-form"
+      form-fields="[[searchFormFields]]"
+      select-fields="[[selectFields]]"
+      sort-fields="[[sortFields]]"
+      action-url="[[menuInfo.resource_url]]"
+      page="{{page}}"
+      limit="[[limit]]"
+      last-response="{{lastResponse}}"
+    >
+    </things-search-form>
 
-		<div class="container flex-horizontal-with-ratios">
-			<things-resource-grid
-				id="grid"
-				class="flex3child"
-				grid-height="[[gridHeight]]"
-				auto-filter = "[[autoFilter]]"
-				model="[[gridModel]]"
-				columns="[[gridColumns]]"
-				config="[[gridConfig]]"
-				buttons="[[buttons]]"
-				current-page="{{page}}"
-				limit="{{limit}}"
-				data="[[items]]"
-				total-count="[[itemCount]]"
-				grid-save-action="[[menuInfo.grid_save_url]]"
-				fixed-column-count="[[menuInfo.fixed_columns]]"
-				export-file-name="[[menuInfo.title]]"
-				export-sheet-name="[[menuInfo.title]]"
-				diy-template-id="[[menuInfo.diy_template_id]]">
-			</things-resource-grid>
+    <div class="container flex-horizontal-with-ratios">
+      <things-resource-grid
+        id="grid"
+        class="flex3child"
+        grid-height="[[gridHeight]]"
+        auto-filter="[[autoFilter]]"
+        model="[[gridModel]]"
+        columns="[[gridColumns]]"
+        config="[[gridConfig]]"
+        buttons="[[buttons]]"
+        current-page="{{page}}"
+        limit="{{limit}}"
+        data="[[items]]"
+        total-count="[[itemCount]]"
+        grid-save-action="[[menuInfo.grid_save_url]]"
+        fixed-column-count="[[menuInfo.fixed_columns]]"
+        export-file-name="[[menuInfo.title]]"
+        export-sheet-name="[[menuInfo.title]]"
+        diy-template-id="[[menuInfo.diy_template_id]]"
+      >
+      </things-resource-grid>
 
-			<div class="flexchild layout vertical" hidden="[[!showDetailForm]]">
-				<div>
-					<span class="subtitle" on-tap="foldBtnTap">[[title]]</span>
-				</div>
+      <div class="flexchild layout vertical" hidden="[[!showDetailForm]]">
+        <div>
+          <span class="subtitle" on-tap="foldBtnTap">[[title]]</span>
+        </div>
 
-				<things-resource-form
-					id="resource-form"
-					class="flex"
-					column-count="1"
-					resource-url="[[resourceSaveUrl]]"
-					resource="{{resource}}"
-					form-fields="[[resourceFormFields]]"
-					remove-fields-on-save="[[removeFieldsOnSave]]">
-				</things-resource-form>
-			</div>
-		</div>
-	</template>
+        <things-resource-form
+          id="resource-form"
+          class="flex"
+          column-count="1"
+          resource-url="[[resourceSaveUrl]]"
+          resource="{{resource}}"
+          form-fields="[[resourceFormFields]]"
+          remove-fields-on-save="[[removeFieldsOnSave]]"
+        >
+        </things-resource-form>
+      </div>
+    </div>
+  </template>
 
-	<script>
-		Polymer({
-			is: 'things-standard-menu-content',
+  <script>
+    Polymer({
+      is: "things-standard-menu-content",
 
-			behaviors: [
-				Things.MenuGridContentBehavior,
-				Things.DetailViewBehavior
-			],
+      behaviors: [Things.MenuGridContentBehavior, Things.DetailViewBehavior],
 
-			properties: {
-				/**
-				 * 그리드에서 저장을 위한 URL
-				 */
-				resourceSaveUrl: {
-					type: String
-				},
+      properties: {
+        /**
+         * 그리드에서 저장을 위한 URL
+         */
+        resourceSaveUrl: {
+          type: String,
+        },
 
-				/**
-				 * 화면 타이틀 
-				 */
-				title: {
-					type: String
-				},
+        /**
+         * 화면 타이틀
+         */
+        title: {
+          type: String,
+        },
 
-				/**
-				 * 상세 폼 보기 활성화를 위한 설정  
-				 */
-				showDetailForm: {
-					type: Boolean,
-					value: false
-				}
-			},
+        /**
+         * 상세 폼 보기 활성화를 위한 설정
+         */
+        showDetailForm: {
+          type: Boolean,
+          value: false,
+        },
+      },
 
-			observers: [
-				'_menuConfigChanged(menuInfo)'
-			],
+      observers: ["_menuConfigChanged(menuInfo)"],
 
-			listeners: {
-				'resource-form.things-detail-form-save-success' : 'refreshData',
-				'grid.things-grid-detail-tap': 'detailTapped'
-			},
+      listeners: {
+        "resource-form.things-detail-form-save-success": "refreshData",
+        "grid.things-grid-detail-tap": "detailTapped",
+      },
 
-			/**
-			 * 메뉴 정보가 변경된 이후 
-			 * @param {Object} menuInfo 서버로 부터 조회한 메뉴 정보 
-			 * *****
-			 */
-			_menuConfigChanged: function(menuInfo) {
-				this.resourceSaveUrl = menuInfo.resource_url + '/:id';
-			},
+      /**
+       * 메뉴 정보가 변경된 이후
+       * @param {Object} menuInfo 서버로 부터 조회한 메뉴 정보
+       * *****
+       */
+      _menuConfigChanged: function (menuInfo) {
+        this.resourceSaveUrl = menuInfo.resource_url + "/:id";
+      },
 
-			/**
-			 * 그리드의 detail 버튼 클릭시 detailForm을 보여준다.
-			 * @param {Object} event 상세 버튼 클릭 이벤트  
-			 * *****
-			 */
-			detailTapped: function(event) {
-				this.title = (event.detail.title) ? event.detail.title : (event.detail.name) ? event.detail.name : 'detail';
-				this.showDetailForm = true;
-			},
+      /**
+       * 그리드의 detail 버튼 클릭시 detailForm을 보여준다.
+       * @param {Object} event 상세 버튼 클릭 이벤트
+       * *****
+       */
+      detailTapped: function (event) {
+        this.title = event.detail.title ? event.detail.title : event.detail.name ? event.detail.name : "detail";
+        this.showDetailForm = true;
+      },
 
-			/**
-			 * detailForm의 fold 버튼 클릭시 detail form을 숨김
-			 * *****
-			 */
-			foldBtnTap: function() {
-				this.showDetailForm = false;
-				this.$.grid.resizeGrid();
-			}
-		});
-	</script>
+      /**
+       * detailForm의 fold 버튼 클릭시 detail form을 숨김
+       * *****
+       */
+      foldBtnTap: function () {
+        this.showDetailForm = false;
+        this.$.grid.resizeGrid();
+      },
+    });
+  </script>
 </dom-module>

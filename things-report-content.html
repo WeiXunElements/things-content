@@ -1,14 +1,14 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-form/things-resource-form.html">
-<link rel="import" href="../things-form/things-search-form.html">
-<link rel="import" href="../things-section/things-diy-based-grid.html">
-<link rel="import" href="./things-resource-menu-content-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-form/things-resource-form.html" />
+<link rel="import" href="../things-form/things-search-form.html" />
+<link rel="import" href="../things-section/things-diy-based-grid.html" />
+<link rel="import" href="./things-resource-menu-content-behavior.html" />
 
 <!--
 	검색 폼 - Diy 기반 그리드 화면으로 구성된 화면(Report Type Screen)을 등록한다.
@@ -16,52 +16,47 @@ Copyright © HatioLab Inc. All rights reserved.
 -->
 
 <dom-module id="things-report-content">
-	<template>
-		<style>
-			:host {
-				display: block;
-				@apply(--layout-vertical);
-				@apply(--layout-flex);
-			}
-		</style>
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply (--layout-vertical);
+        @apply (--layout-flex);
+      }
+    </style>
 
-		<things-ajax 
-			auto
-			id="resource-meta"
-			method="GET"
-			resource-url="[[menuMetaUrl]]"
-			last-response="{{metaData}}">
-		</things-ajax>
+    <things-ajax auto id="resource-meta" method="GET" resource-url="[[menuMetaUrl]]" last-response="{{metaData}}">
+    </things-ajax>
 
-		<things-search-form 
-			id="search-form"
-			form-fields="[[searchFormFields]]" 
-			select-fields="[[selectFields]]"
-			sort-fields="[[sortFields]]"
-			action-url="[[menuInfo.resource_url]]" 
-			page="{{page}}"
-			limit="[[limit]]"
-			last-response="{{lastResponse}}">
-		</things-search-form>
+    <things-search-form
+      id="search-form"
+      form-fields="[[searchFormFields]]"
+      select-fields="[[selectFields]]"
+      sort-fields="[[sortFields]]"
+      action-url="[[menuInfo.resource_url]]"
+      page="{{page}}"
+      limit="[[limit]]"
+      last-response="{{lastResponse}}"
+    >
+    </things-search-form>
 
-		<things-diy-based-grid
-			id='grid'
-			content
-			items="[[lastResponse]]"
-			buttons="[[buttons]]"
-			class="flex"
-			diy-grid-name="[[menuInfo.resource_name]]"
-			fixed-column-count="[[menuInfo.fixed_columns]]">
-		</things-diy-based-grid>
-	</template>
+    <things-diy-based-grid
+      id="grid"
+      content
+      items="[[lastResponse]]"
+      buttons="[[buttons]]"
+      class="flex"
+      diy-grid-name="[[menuInfo.resource_name]]"
+      fixed-column-count="[[menuInfo.fixed_columns]]"
+    >
+    </things-diy-based-grid>
+  </template>
 
-	<script>
-		Polymer({
-			is: 'things-report-content',
+  <script>
+    Polymer({
+      is: "things-report-content",
 
-			behaviors: [
-				Things.ResourceMenuContentBehavior
-			]
-		});
-	</script>
+      behaviors: [Things.ResourceMenuContentBehavior],
+    });
+  </script>
 </dom-module>

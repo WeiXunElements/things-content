@@ -1,14 +1,14 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../things-ws/things-ws-subscriber.html">
-<link rel="import" href="../things-scene-viewer/things-scene-viewer.html">
-<link rel="import" href="./things-menu-content-behavior.html">
-<link rel="import" href="./things-monitoring-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../things-ws/things-ws-subscriber.html" />
+<link rel="import" href="../things-scene-viewer/things-scene-viewer.html" />
+<link rel="import" href="./things-menu-content-behavior.html" />
+<link rel="import" href="./things-monitoring-behavior.html" />
 
 <!--
   Things-point와 연동하여 Scene Content를 화면에 표시.
@@ -21,45 +21,40 @@ Copyright © HatioLab Inc. All rights reserved.
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply (--layout-vertical);
+        @apply (--layout-flex);
       }
 
       things-scene-viewer {
-        @apply(--layout-flex)
+        @apply (--layout-flex);
       }
     </style>
 
-    <things-ajax  auto
-                  id="get-scene"
-                  resource-url="[[menuInfo.resource_url]]"
-                  last-response="{{response}}">
+    <things-ajax auto id="get-scene" resource-url="[[menuInfo.resource_url]]" last-response="{{response}}">
     </things-ajax>
 
-    <things-scene-viewer model="[[model]]"
-                         values="[[monitoringData]]"
-                         mode="1"
-                         fit="both"
-                         base-url="[[globals.baseUrl]]">
+    <things-scene-viewer
+      model="[[model]]"
+      values="[[monitoringData]]"
+      mode="1"
+      fit="both"
+      base-url="[[globals.baseUrl]]"
+    >
     </things-scene-viewer>
-
   </template>
 
   <script>
     Polymer({
-      is: 'things-scene-player',
+      is: "things-scene-player",
 
-      behaviors: [
-        Things.MenuContentBehavior,
-        Things.MonitoringBehavior
-      ],
+      behaviors: [Things.MenuContentBehavior, Things.MonitoringBehavior],
 
       properties: {
         /**
          * Scene Model
          ******/
         model: {
-          type: Object
+          type: Object,
         },
 
         /**
@@ -67,7 +62,7 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         response: {
           type: Object,
-          observer: 'responseChanged'
+          observer: "responseChanged",
         },
 
         /**
@@ -75,7 +70,7 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         playInterval: {
           type: String,
-          value: 3000
+          value: 3000,
         },
 
         /**
@@ -83,14 +78,14 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         playPages: {
           type: String,
-          observer: '_playPagesChanged'
+          observer: "_playPagesChanged",
         },
 
         /**
          * 배열의 형태로 초기화된 scene들의 라우팅 정보
          ******/
         playPageList: {
-          type: Array
+          type: Array,
         },
 
         /**
@@ -98,50 +93,54 @@ Copyright © HatioLab Inc. All rights reserved.
          ******/
         _playingIndex: {
           type: Number,
-          value: 0
+          value: 0,
         },
 
         /**
          * Async player
          ******/
         _asyncPlayer: {
-          type: Object
-        }
+          type: Object,
+        },
       },
 
-      observers: [
-        'viewerMenuInfoChanged(menuInfo)'
-      ],
+      observers: ["viewerMenuInfoChanged(menuInfo)"],
 
-      ready: function() {
+      ready: function () {
         this.pullRequestCallback = this.pullRequest;
-        this.subscriberId = 'subscriber';
+        this.subscriberId = "subscriber";
         this.msgReceivedCallback = this.messageReceived;
       },
 
       /**
        * 메뉴 정보 변경시
-       * @param {Object} menuInfo 메뉴 정보 
+       * @param {Object} menuInfo 메뉴 정보
        * *****
        */
-      viewerMenuInfoChanged: function(menuInfo) {
-        document.addEventListener('things-player-stop_' + menuInfo.routing, function(event) {
-          this.togglePlayPages('off');
-        }.bind(this));
+      viewerMenuInfoChanged: function (menuInfo) {
+        document.addEventListener(
+          "things-player-stop_" + menuInfo.routing,
+          function (event) {
+            this.togglePlayPages("off");
+          }.bind(this)
+        );
 
-        document.addEventListener('things-toggle-play-page_' + menuInfo.routing, function(event) {
-          var power = event.detail;
-          this.togglePlayPages(power);
-        }.bind(this));
+        document.addEventListener(
+          "things-toggle-play-page_" + menuInfo.routing,
+          function (event) {
+            var power = event.detail;
+            this.togglePlayPages(power);
+          }.bind(this)
+        );
       },
 
       /**
        * 전달받은 scene의 routing 정보들을 배열로 초기화
-       * @param {Array} pages Scene Play 기능을 위한 여러 페이지 정보. ','로 구분되어 있음 
+       * @param {Array} pages Scene Play 기능을 위한 여러 페이지 정보. ','로 구분되어 있음
        * *****
        */
-      _playPagesChanged: function(pages) {
-        this.playPageList = pages.split(',');
+      _playPagesChanged: function (pages) {
+        this.playPageList = pages.split(",");
       },
 
       /**
@@ -149,8 +148,8 @@ Copyright © HatioLab Inc. All rights reserved.
        * @param {String} power Scene Play 기능 활성화 할 지 여부 - on/off
        * *****
        */
-      togglePlayPages: function(power) {
-        if(power == 'on') {
+      togglePlayPages: function (power) {
+        if (power == "on") {
           this.startPlayPages();
         } else {
           this.stopPlayPages();
@@ -161,45 +160,45 @@ Copyright © HatioLab Inc. All rights reserved.
        * Start play pages
        * *****
        */
-      startPlayPages: function() {
+      startPlayPages: function () {
         var playingCount = this.playPageList ? this.playPageList.length : 0;
-        if(playingCount <= 1) return;
+        if (playingCount <= 1) return;
 
         this._asyncPlayer = this.async(this.startPlayPages, this.playInterval);
         var currentPage = this.playPageList[this._playingIndex];
-        page('/' + currentPage, {mainPage: this.menuInfo.routing});
+        page("/" + currentPage, { mainPage: this.menuInfo.routing });
         this._playingIndex++;
-        if(this._playingIndex >= playingCount) this._playingIndex = 0;
+        if (this._playingIndex >= playingCount) this._playingIndex = 0;
       },
 
       /**
        * Stop play pages
        * *****
        */
-      stopPlayPages: function() {
-        if(!this._asyncPlayer) return;
+      stopPlayPages: function () {
+        if (!this._asyncPlayer) return;
         this.cancelAsync(this._asyncPlayer);
         this._asyncPlayer = null;
         this._playingIndex = 0;
-        page('/' + this.menuInfo.routing);
+        page("/" + this.menuInfo.routing);
 
-        this.playPageList.forEach(function(page) {
-          var stopChildPages = new CustomEvent('things-toggle-play-page_' + page, { detail: 'off'});
+        this.playPageList.forEach(function (page) {
+          var stopChildPages = new CustomEvent("things-toggle-play-page_" + page, { detail: "off" });
           document.dispatchEvent(stopChildPages);
-        })
+        });
       },
 
       /**
        * Scene 정보 조회 후 모델 설정
-       * @param {Object} data subscribe된 데이터 
+       * @param {Object} data subscribe된 데이터
        * *****
        */
-      responseChanged: function(data) {
-        if(data) {
+      responseChanged: function (data) {
+        if (data) {
           this.model = JSON.parse(data.model);
-          this.publishSubject = '/elidom/stomp/topic/hatiolab-hq/smart/' + data.name;
+          this.publishSubject = "/elidom/stomp/topic/hatiolab-hq/smart/" + data.name;
         }
-      }
+      },
     });
   </script>
 </dom-module>
